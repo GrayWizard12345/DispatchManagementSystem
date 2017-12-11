@@ -1,13 +1,12 @@
-<?xml version="1.0" encoding="UTF-8" standalone="no"?>
-<diagram program="umlet" version="14.2">
+<?xml version="1.0" encoding="UTF-8"?><diagram program="umlet" version="13.3">
   <zoom_level>10</zoom_level>
   <element>
     <type>com.baselet.element.old.element.Class</type>
     <coordinates>
-      <x>1130</x>
-      <y>380</y>
+      <x>520</x>
+      <y>240</y>
       <w>310</w>
-      <h>310</h>
+      <h>210</h>
     </coordinates>
     <panel_attributes>Driver
 --
@@ -15,8 +14,8 @@
 -location: Location
 -vehicle: Vehicle 
 -state: State
+-conn: Connection
 -currentOrder: Order
-- connection: Connection
 --
 +sendData(): void
 +receiveOrder(order: Order): void
@@ -26,114 +25,271 @@
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLClass</id>
+    <type>com.baselet.element.old.element.Class</type>
     <coordinates>
-      <x>130</x>
-      <y>100</y>
-      <w>300</w>
-      <h>250</h>
-    </coordinates>
-    <panel_attributes>Connection
---
-- ip: string
-- port: int
-- serverSocket: int
-- 
---
-+ connectToServer(): void</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>130</x>
-      <y>380</y>
+      <x>390</x>
+      <y>70</y>
       <w>310</w>
-      <h>270</h>
+      <h>130</h>
     </coordinates>
-    <panel_attributes>Client
+    <panel_attributes>User
 --
-- location: Location
-- phoneNum: string
-- connection: Connection
-- serverAddress: SockAddr_in
-- is_Up: int
+-conn: Connection
+-order: Order
+-phoneNumber: char[]
 --
-+ makeOrder(): void
-+ cancelOrder(): void
-
++placeOrder(source: char[]): void
++cancelOrder(): void
 </panel_attributes>
     <additional_attributes/>
   </element>
   <element>
-    <id>UMLClass</id>
+    <type>com.baselet.element.old.element.Class</type>
     <coordinates>
-      <x>500</x>
-      <y>110</y>
-      <w>390</w>
-      <h>240</h>
-    </coordinates>
-    <panel_attributes>Location
---
-- longitude: double
-- lattitude: double
---
-+ distanceTo(location: Location): double
-</panel_attributes>
-    <additional_attributes/>
-  </element>
-  <element>
-    <id>UMLClass</id>
-    <coordinates>
-      <x>630</x>
-      <y>380</y>
-      <w>320</w>
-      <h>380</h>
+      <x>90</x>
+      <y>340</y>
+      <w>350</w>
+      <h>200</h>
     </coordinates>
     <panel_attributes>Server
 --
-- connection: Connection
-- 
+-conn:Connection
+-drivers: int[]
+-users: int[]
 --
-+</panel_attributes>
+-initDrivers(): void
+-findSuitableDriver(source: char[]): Driver
++confirmOrder(source: char[]): void
++sendNotificationToUser(messg: char[]): void
++assigOrderToDriver(order: Order): void
++updateDriverData(driver: Driver): void
+</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>870</x>
+      <y>130</y>
+      <w>200</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>Order
+--
+-source: Location
+-destination: Location</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>540</x>
+      <y>490</y>
+      <w>180</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>Location
+--
+-lat: float
+-lng: float</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>730</x>
+      <y>490</y>
+      <w>190</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>State
+--
+_+FREE_
+_+WAITING_
+_+PICKED_UP_</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>50</x>
+      <y>150</y>
+      <w>210</w>
+      <h>100</h>
+    </coordinates>
+    <panel_attributes>Connection
+--
+_-IP: String_
+_-socketID: int_
+_-port: int_
+--
++connectToServer(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>200</x>
+      <y>240</y>
+      <w>30</w>
+      <h>120</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;100.0;10.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>300</x>
+      <y>150</y>
+      <w>110</w>
+      <h>210</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;190.0;10.0;10.0;90.0;10.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
       <x>430</x>
       <y>370</y>
-      <w>220</w>
-      <h>50</h>
+      <w>110</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-1                    *</panel_attributes>
-    <additional_attributes>10.0;30.0;200.0;30.0</additional_attributes>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;20.0;90.0;20.0</additional_attributes>
   </element>
   <element>
     <id>Relation</id>
     <coordinates>
-      <x>940</x>
-      <y>360</y>
-      <w>210</w>
-      <h>50</h>
+      <x>690</x>
+      <y>120</y>
+      <w>200</w>
+      <h>40</h>
     </coordinates>
-    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
-1                    *</panel_attributes>
-    <additional_attributes>190.0;30.0;10.0;30.0</additional_attributes>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;20.0;180.0;20.0</additional_attributes>
   </element>
   <element>
-    <id>UMLClass</id>
+    <id>Relation</id>
     <coordinates>
-      <x>1040</x>
-      <y>80</y>
-      <w>290</w>
-      <h>220</h>
+      <x>720</x>
+      <y>150</y>
+      <w>170</w>
+      <h>110</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;90.0;10.0;10.0;150.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>180</x>
+      <y>90</y>
+      <w>230</w>
+      <h>80</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;60.0;10.0;10.0;210.0;10.0</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>890</x>
+      <y>310</y>
+      <w>190</w>
+      <h>90</h>
+    </coordinates>
+    <panel_attributes>Vehicle
+--
+-number: char[]
+-model: char[]
+-color: char[]</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>820</x>
+      <y>330</y>
+      <w>90</w>
+      <h>40</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;20.0;70.0;20.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>610</x>
+      <y>440</y>
+      <w>30</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>790</x>
+      <y>440</y>
+      <w>30</w>
+      <h>70</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;50.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>150</x>
+      <y>240</y>
+      <w>390</w>
+      <h>60</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;40.0;370.0;40.0</additional_attributes>
+  </element>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>90</x>
+      <y>560</y>
+      <w>350</w>
+      <h>140</h>
     </coordinates>
     <panel_attributes>DBManager
 --
-
-</panel_attributes>
+-dbName: char[]
+-host: char[]
+-posrt: int
+-userName: char[]
+-password: char[]
+--
++getAllDrivers(): Drivers[]</panel_attributes>
     <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>230</x>
+      <y>530</y>
+      <w>30</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=-
+</panel_attributes>
+    <additional_attributes>10.0;10.0;10.0;30.0</additional_attributes>
   </element>
 </diagram>
