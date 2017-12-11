@@ -1,0 +1,139 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<diagram program="umlet" version="14.2">
+  <zoom_level>10</zoom_level>
+  <element>
+    <type>com.baselet.element.old.element.Class</type>
+    <coordinates>
+      <x>1130</x>
+      <y>380</y>
+      <w>310</w>
+      <h>310</h>
+    </coordinates>
+    <panel_attributes>Driver
+--
+-id: int
+-location: Location
+-vehicle: Vehicle 
+-state: State
+-currentOrder: Order
+- connection: Connection
+--
++sendData(): void
++receiveOrder(order: Order): void
++notifyOnArrival(): void
++notifyOnDelivery(): void
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>130</x>
+      <y>100</y>
+      <w>300</w>
+      <h>250</h>
+    </coordinates>
+    <panel_attributes>Connection
+--
+- ip: string
+- port: int
+- serverSocket: int
+- 
+--
++ connectToServer(): void</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>130</x>
+      <y>380</y>
+      <w>310</w>
+      <h>270</h>
+    </coordinates>
+    <panel_attributes>Client
+--
+- location: Location
+- phoneNum: string
+- connection: Connection
+- serverAddress: SockAddr_in
+- is_Up: int
+--
++ makeOrder(): void
++ cancelOrder(): void
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>500</x>
+      <y>110</y>
+      <w>390</w>
+      <h>240</h>
+    </coordinates>
+    <panel_attributes>Location
+--
+- longitude: double
+- lattitude: double
+--
++ distanceTo(location: Location): double
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>630</x>
+      <y>380</y>
+      <w>320</w>
+      <h>380</h>
+    </coordinates>
+    <panel_attributes>Server
+--
+- connection: Connection
+- 
+--
++</panel_attributes>
+    <additional_attributes/>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>430</x>
+      <y>370</y>
+      <w>220</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+1                    *</panel_attributes>
+    <additional_attributes>10.0;30.0;200.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>Relation</id>
+    <coordinates>
+      <x>940</x>
+      <y>360</y>
+      <w>210</w>
+      <h>50</h>
+    </coordinates>
+    <panel_attributes>lt=&lt;&lt;&lt;&lt;&lt;-
+1                    *</panel_attributes>
+    <additional_attributes>190.0;30.0;10.0;30.0</additional_attributes>
+  </element>
+  <element>
+    <id>UMLClass</id>
+    <coordinates>
+      <x>1040</x>
+      <y>80</y>
+      <w>290</w>
+      <h>220</h>
+    </coordinates>
+    <panel_attributes>DBManager
+--
+
+</panel_attributes>
+    <additional_attributes/>
+  </element>
+</diagram>
