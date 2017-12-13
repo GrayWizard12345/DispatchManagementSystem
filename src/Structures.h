@@ -18,8 +18,8 @@
 #define DEFAULT_PORT 60666
 
 
-
-struct Connection{
+typedef struct Connection Connection;
+struct Connection {
 
     //Attributes
     char* ip;
@@ -36,31 +36,53 @@ struct Connection{
 };
 
 
+double Location_CalculateDistanceTo(void *from, void *to);
+
+typedef struct Location Location;
 struct Location{
 
     float latitude;
     float longitude;
+    double (*calculateDistanceTo)(Location *, Location *);
 
+} locationInit() {
+    printf("Location constructor called!\n");
+
+    struct Location* location = malloc(sizeof(struct Location));
+
+    location->calculateDistanceTo = Location_CalculateDistanceTo ;
+    return *location;
 };
 
-struct Order{
+
+double Location_CalculateDistanceTo(void *from, void *to) {
+    Location *a = from;
+    Location *b = to;
+//    float
+    printf("%f %f\n", a->latitude, a->longitude);
+    printf("%f %f\n", b->latitude, b->longitude);
+
+    return 3.14;
+}
+
+typedef struct Order Order;
+struct Order {
 
     struct Location source;
     struct Location destination;
 
-
 };
 
-
-
-struct Driver{
+typedef struct Driver Driver;
+struct Driver {
 
     struct Connection* connection;
 
 
 };
 
-struct Client{
+typedef Client Client;
+struct Client {
 
     struct Connection* connection;
 
@@ -72,7 +94,8 @@ int ADD(int a, int b)
     return a+b;
 }
 
-struct Server{
+typedef Server Server;
+struct Server {
 
 
     struct Connection* connection;
@@ -98,5 +121,3 @@ struct Server{
     server->myMethod = ADD;
     return *server;
 };
-
-
