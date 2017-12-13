@@ -1,6 +1,8 @@
 //
 // Created by hamlet on 12/13/17.
 //
+#pragma once
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -10,7 +12,9 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <pthread.h>
-
+#include <stdio.h>
+#include <math.h>
+#define pi 3.14159265358979323846
 
 #define MAX_BUFFER 4096
 #define MAX_DRIVERS 256
@@ -35,36 +39,6 @@ struct Connection {
 
 };
 
-
-double Location_CalculateDistanceTo(void *from, void *to);
-
-typedef struct Location Location;
-struct Location{
-
-    float latitude;
-    float longitude;
-    double (*calculateDistanceTo)(Location *, Location *);
-
-} locationInit() {
-    printf("Location constructor called!\n");
-
-    struct Location* location = malloc(sizeof(struct Location));
-
-    location->calculateDistanceTo = Location_CalculateDistanceTo ;
-    return *location;
-};
-
-
-double Location_CalculateDistanceTo(void *from, void *to) {
-    Location *a = from;
-    Location *b = to;
-//    float
-    printf("%f %f\n", a->latitude, a->longitude);
-    printf("%f %f\n", b->latitude, b->longitude);
-
-    return 3.14;
-}
-
 typedef struct Order Order;
 struct Order {
 
@@ -80,9 +54,8 @@ struct Driver {
 
 
 };
-//super comment
 
-typedef Client Client;
+typedef struct Client Client;
 struct Client {
 
     struct Connection* connection;
@@ -95,7 +68,7 @@ int ADD(int a, int b)
     return a+b;
 }
 
-typedef Server Server;
+typedef struct Server Server;
 struct Server {
 
 
