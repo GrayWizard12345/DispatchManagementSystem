@@ -15,6 +15,7 @@
 #define MAX_BUFFER 4096
 #define MAX_DRIVERS 256
 #define MAX_CLIENTS 512
+#define DEFAULT_PORT 60666
 
 
 
@@ -77,6 +78,8 @@ struct Server{
     struct Connection* connection;
     struct Driver** drivers;
     struct Client** clients;
+    //Socket options
+    int opt;
 
     int (*myMethod)(int a, int b);
 
