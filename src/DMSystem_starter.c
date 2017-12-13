@@ -3,11 +3,14 @@
 //
 #include <stdlib.h>
 #include <stdio.h>
+#include "Structures.h"
+
 int main(int argc, char** argv)
 {
 
     printf("Hello World\n");
 
+    struct Server server = serverInit();
 
 
 
