@@ -28,7 +28,12 @@ struct Connection{
 
     //TODO methods to be added
 
+} connectionInit(){
+
+    //TODO connection initializer
+
 };
+
 
 struct Location{
 
@@ -61,6 +66,10 @@ struct Client{
 
 };
 
+int ADD(int a, int b)
+{
+    return a+b;
+}
 
 struct Server{
 
@@ -69,16 +78,22 @@ struct Server{
     struct Driver** drivers;
     struct Client** clients;
 
+    int (*myMethod)(int a, int b);
+
 
 } serverInit(){
 
 
     printf("Server constructor called!\n");
+
     struct Server* server = malloc(sizeof(struct Server));
     server->drivers = malloc(sizeof(struct Driver*) * MAX_DRIVERS);
-    
+
     for (int i = 0; i < MAX_DRIVERS; ++i) {
         server->drivers[i] = malloc(sizeof(struct Driver));
     }
+    server->myMethod = ADD;
     return *server;
 };
+
+

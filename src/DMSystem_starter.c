@@ -5,13 +5,18 @@
 #include <stdio.h>
 #include "Structures.h"
 
+
+
+
 int main(int argc, char** argv)
 {
 
-    printf("Hello World\n");
-
     struct Server server = serverInit();
 
+    printf("Hello World\n");
+
+
+    printf("5 + 4 = %d", server.myMethod(5,4));
 
 
 
