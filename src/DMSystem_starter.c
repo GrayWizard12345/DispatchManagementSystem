@@ -19,19 +19,22 @@ int main(int argc, char** argv)
     int addrlen = sizeof(struct sockaddr_in);
 
     printf("CREATING SERVER SOCKET .....\n");
-// Creating socket file descriptor
+
+    // Creating socket file descriptor
     if ((server.connection->socket = socket(AF_INET, SOCK_STREAM, 0)) == 0)
     {
         perror("socket creation failed");
         exit(EXIT_FAILURE);
     }
     printf("DEFINING SERVER SOCKET OPTIONS, FAMILY, ADDRESS & PORT .....\n");
-// Forcefully attaching socket to the port 8080
-    if (setsockopt(server.connection->socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &opt, sizeof(opt)))
+
+    // Forcefully attaching socket to the port 8080
+    if (setsockopt(server.connection->socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &server.opt, sizeof(server.opt)))
     {
         perror("setsockopt failed");
         exit(EXIT_FAILURE);
     }
+
     address.sin_family = AF_INET;
     address.sin_addr.s_addr = INADDR_ANY;
     address.sin_port = htons( PORT );
