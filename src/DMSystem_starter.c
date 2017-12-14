@@ -6,6 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../Structures/Structures.h"
+#include "Server.h"
+
 
 char* initialPackageToSend = "Hello form server!\n";
 char* initialPackageToReceive;
@@ -14,13 +16,8 @@ int client_is_active[MAX_CLIENTS + MAX_DRIVERS] = {};
 int clients_count = 0;
 struct Server server;
 
-//Will accept incoming connections
-void acceptConnections();
 
-//Start a connections session with client or driver
-void startSession(void*);
-
-
+// Main thread
 int main(int argc, char** argv)
 {
 
@@ -69,49 +66,20 @@ int main(int argc, char** argv)
     }
 
 
-
-
     printf("Hello World\n");
 
 
     printf("5 + 4 = %d", server.myMethod(5,4));
 
 
+    // Accept connections
+    acceptConnections();
+
+
+
+
+
 
 
     return 0;
-}
-
-
-void acceptConnections() {
-    while (clients_count <= MAX_DRIVERS + MAX_CLIENTS)
-    {
-        int i = 0;
-
-        //this loop finds a not vacant place in activity array
-        while (client_is_active[i++] != 0);
-
-        //and reserve found place for a new client to be connected
-        client_is_active[i] = 1;
-
-        //Wait for a connection and accept it
-        if((server.clients[i]->connection->socket =
-                    accept(server.connection->socket,
-                           (struct sockaddr*)&server.connection->address,
-                           (socklen_t*)&server.connection->address)) < 0)
-        {
-            perror("SOCKET ACCEPT FAILED");
-            exit(EXIT_FAILURE);
-        }
-
-        printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
-
-        //some volatile variables must be declared here
-//        clients[i]->client_id = i;
-//        clients[i]->isUp = 1;
-//        clients_count++;
-
-
-
-    }
 }
