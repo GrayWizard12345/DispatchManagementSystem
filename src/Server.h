@@ -26,9 +26,13 @@ void startSession(void* obj, int obj_type);
  */
 void clientConnectionThread(void*);
 
-
-
-
+/*
+ * A function to be passed to pthread.
+ * Active connection is maintained in this function
+ * Void pointer parameter is a pointer to a structure
+ * containing all parameters to be passed to the function
+ */
+void driverConnectionThread(void*);
 
 
 
