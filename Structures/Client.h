@@ -46,3 +46,5 @@ void client_setConnection(void* client, Connection connection) {
     Client *self = client;
     self->connection = connection;
 }
+
+//test
