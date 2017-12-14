@@ -11,5 +11,6 @@ struct Order {
 
     struct Location source;
     struct Location destination;
+    int userId;
 
 };
