@@ -4,7 +4,6 @@
 
 #pragma once
 
-#include <stdbool.h>
 #include "Connection.h"
 #include "Order.h"
 
@@ -17,7 +16,7 @@ struct Client {
     Connection connection;
     Order order;
     int id;
-    bool isActive;
+    int isUp;
     char* phoneNumber;
     char* name;
 
