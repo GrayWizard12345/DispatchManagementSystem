@@ -6,7 +6,6 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../Structures/Structures.h"
-#include "Server.h"
 
 
 struct Server server;
@@ -62,9 +61,6 @@ int main(int argc, char** argv)
 
 
     printf("Hello World\n");
-
-
-    printf("5 + 4 = %d", server.myMethod(5,4));
 
 
     // Accept connections
