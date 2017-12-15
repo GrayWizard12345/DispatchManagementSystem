@@ -9,6 +9,17 @@
 #define DRIVER_OBJ 1
 
 
+
+char* initialPackageToSend = "Hello form server!\n";
+char* initialPackageToReceive;
+char* serverShutdownMessage = "SERVER IS GOING DOWN!";
+int client_is_active[2][MAX_CLIENTS] = {};
+int clients_count = 0;
+int driver_is_active[2][MAX_DRIVERS] = {};
+int drivers_count = 0;
+
+
+
 //Will accept incoming connections
 void acceptConnections();
 

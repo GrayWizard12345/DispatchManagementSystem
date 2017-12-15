@@ -9,11 +9,6 @@
 #include "Server.h"
 
 
-char* initialPackageToSend = "Hello form server!\n";
-char* initialPackageToReceive;
-char* serverShutdownMessage = "SERVER IS GOING DOWN!";
-int client_is_active[MAX_CLIENTS + MAX_DRIVERS] = {};
-int clients_count = 0;
 struct Server server;
 
 
@@ -73,7 +68,7 @@ int main(int argc, char** argv)
 
 
     // Accept connections
-    acceptConnections();
+    acceptConnections(server);
 
 
 
