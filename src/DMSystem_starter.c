@@ -6,14 +6,8 @@
 #include <stdlib.h>
 #include <stdio.h>
 #include "../Structures/Structures.h"
-#include "Server.h"
 
 
-char* initialPackageToSend = "Hello form server!\n";
-char* initialPackageToReceive;
-char* serverShutdownMessage = "SERVER IS GOING DOWN!";
-int client_is_active[MAX_CLIENTS + MAX_DRIVERS] = {};
-int clients_count = 0;
 struct Server server;
 
 
@@ -69,11 +63,8 @@ int main(int argc, char** argv)
     printf("Hello World\n");
 
 
-    printf("5 + 4 = %d", server.myMethod(5,4));
-
-
     // Accept connections
-    acceptConnections();
+    acceptConnections(server);
 
 
 
