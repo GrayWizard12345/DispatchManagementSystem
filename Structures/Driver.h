@@ -9,6 +9,8 @@ typedef struct Driver Driver;
 struct Driver {
 
     struct Connection* connection;
+    int isUp;
+    int id;
 
 
 };

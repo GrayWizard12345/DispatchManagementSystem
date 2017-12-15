@@ -9,6 +9,7 @@ typedef struct Client Client;
 struct Client {
 
     struct Connection* connection;
-
+    int isUp;
+    int id;
 
 };

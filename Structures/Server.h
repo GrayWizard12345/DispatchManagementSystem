@@ -25,8 +25,9 @@ struct Server {
 
 
     struct Connection* connection;
-    struct Driver **drivers;
-    struct Client **clients;
+    //Two arrays of pointers
+    struct Driver *drivers[MAX_DRIVERS];
+    struct Client *clients[MAX_CLIENTS];
     //Socket options
     int opt;
 
@@ -36,11 +37,20 @@ struct Server {
     printf("Server constructor called!\n");
 
     struct Server* server = malloc(sizeof(struct Server));
-    server->drivers = malloc(sizeof(struct Driver) * MAX_DRIVERS);
-    server->clients = malloc(sizeof(struct Client) * MAX_CLIENTS);
+
+    //Initializing the arrays
+    for (int i = 0; i < MAX_CLIENTS; ++i) {
+        server->clients[i] = malloc(sizeof(struct Client));
+    }
+
+    for (int j = 0; j < MAX_DRIVERS; ++j) {
+        server->drivers[j] = malloc(sizeof(struct Driver));
+    }
+
     server->connection = malloc(sizeof(struct Connection));
     return *server;
 };
+
 
 
 //A structure to pass as a parameter to a thread function.
@@ -123,13 +133,13 @@ void acceptConnections(Server server) {
 
         pthread_t thread_id;
 
-        if(ture)
+        if(Condition to check client type)
         {
             client_is_active[0][i] = 1;
             //TODO initialize client id, get it from JSON object
-            client_is_active[1][i] = server.clients[i].id;
-            server.clients[i].isUp = 1;
-            server.clients[i]->connection->socket = sock;
+            client_is_active[1][i] = (*server.clients[i]).id;
+            (*server.clients[i]).isUp = 1;
+            (*server.clients[i]).connection->socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             //Code can be optimized, as the same function is called in else branch
@@ -151,9 +161,9 @@ void acceptConnections(Server server) {
         {
             driver_is_active[0][j] = 1;
             //TODO initialize client id, get it from JSON object
-            driver_is_active[1][j] = server.drivers[j].id;
-            server.drivers[i].isUp = 1;
-            server.drivers[j]->connection->socket = sock;
+            driver_is_active[1][j] = (*server.drivers[j]).id;
+            (*server.drivers[i]).isUp = 1;
+            (*server.drivers[j]).connection->socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             memset(initBuff, 0, MAX_BUFFER);
@@ -183,19 +193,21 @@ void* startSession(void* params) {
     int message_t;
     char* buffer[MAX_BUFFER];
 
+    Client* client;
+    Driver* driver;
     //Here we are ready to get/exchange messages with client or driver!
     switch (obj_type) {
         case CLIENT_OBJ:
 
-            Client* client = obj;
-            while (client.isUp == 1)
+            client = obj;
+            while (client->isUp == 1)
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
                 read(client->connection->socket, buffer, MAX_BUFFER);
 
                 //TODO parse obtained JSON
-                message_t = rand(0); //get message type form JSON
+                message_t = rand(); //get message type form JSON
 
                 //React to client message
                 switch (message_t)
@@ -216,9 +228,8 @@ void* startSession(void* params) {
 
         case DRIVER_OBJ:
 
-            Driver* driver = obj;
-
-            while (driver.isUp == 1)
+            driver = obj;
+            while (driver->isUp == 1)
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
