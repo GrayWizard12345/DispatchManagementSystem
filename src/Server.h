@@ -8,6 +8,13 @@
 #define CLIENT_OBJ 0
 #define DRIVER_OBJ 1
 
+//A structure to pass as a parameter to a thread function.
+struct Session_params{
+
+    void* obj;
+    int obj_type;
+
+};
 
 
 char* initialPackageToSend = "Hello form server!\n";
@@ -26,8 +33,9 @@ void acceptConnections(Server server);
 /*
  * Start a connections session with client or driver
  * "obj_type" variable determines the object type - 0 is client, 1 is driver
+ * Returns a void pointers as this function will be passed to a thread
  */
-void startSession(void* obj, int obj_type);
+void* startSession(void* params);
 
 /*
  * A function to be passed to pthread.
@@ -77,6 +85,7 @@ void acceptConnections(Server server) {
 
         //TODO parse initBuff from JSON to obj or string
 
+        pthread_t thread_id;
 
         if(true)
         {
@@ -86,7 +95,17 @@ void acceptConnections(Server server) {
             server.clients[i].isUp = 1;
             server.clients[i]->connection->socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
-            startSession(server.clients[i], 0);
+
+            //Code can be optimized, as the same function is called in else branch
+            memset(initBuff, 0, MAX_BUFFER);
+            //Sending notification that message is accepted.
+            send(sock, initBuff, strlen(initBuff), 0);
+
+            //Thread parameters
+            struct Session_params session_params = {server.clients[i], 0};
+
+            //Creation of the thread in which connection is maintained.
+            pthread_create(thread_id, NULL, startSession, session_params);
         }
         else
         {
@@ -96,26 +115,90 @@ void acceptConnections(Server server) {
             server.drivers[i].isUp = 1;
             server.drivers[j]->connection->socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
-            startSession(server.drivers[i], 1);
+
+            memset(initBuff, 0, MAX_BUFFER);
+            //Sending notification that message is accepted.
+            send(sock, initBuff, strlen(initBuff), 0);
+
+
+            struct Session_params session_params = {server.clients[i], 0};
+
+            pthread_create(thread_id, NULL, startSession, session_params);
+
         }
 
     }
 }
 
 
-void startSession(void* obj, int obj_type) {
+void* startSession(void* params) {
 
+    //Getting parameters... Hope this gonna work...
+    struct Session_params* session_params = params;
+    int obj_type = session_params->obj_type;
+    void* obj = session_params->obj;
+
+    int message_t;
+    char* buffer[MAX_BUFFER];
+
+    //Here we are ready to get/exchange messages with client or driver!
     switch (obj_type) {
         case CLIENT_OBJ:
 
             Client* client = obj;
+            while (client.isUp == 1)
+            {
+                memset(buffer, 0 , MAX_BUFFER);
 
-            break;
+                read(client->connection->socket, buffer, MAX_BUFFER);
+
+                //TODO parse obtained JSON
+                message_t = rand(0); //get message type form JSON
+
+                //React to client message
+                switch (message_t)
+                {
+                    case 1:
+                        break;
+
+                    case 2:
+                        break;
+
+                    default:
+                        break;
+                }
+
+
+            }
+            break; //End of case 0
+
         case DRIVER_OBJ:
 
             Driver* driver = obj;
 
-            break;
+            while (driver.isUp == 1)
+            {
+                memset(buffer, 0 , MAX_BUFFER);
+
+                read(client->connection->socket, buffer, MAX_BUFFER);
+
+                //TODO parse obtained JSON
+                message_t = rand(0); //get message type form JSON
+
+                switch (message_t)
+                {
+                    case 1:
+                        break;
+
+                    case 2:
+                        break;
+
+                    default:
+                        break;
+                }
+
+            }
+            break; //End of case 1
 
         default:
             break;
