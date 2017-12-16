@@ -13,4 +13,7 @@ struct Order {
     struct Location destination;
     int userId;
 
+} orderInit() {
+    printf("Order's constructor invoked");
+
 };
