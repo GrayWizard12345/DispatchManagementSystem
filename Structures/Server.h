@@ -17,7 +17,6 @@
 #include "Structures.h"
 
 
-
 #define CLIENT_OBJ 0
 #define DRIVER_OBJ 1
 
@@ -73,7 +72,7 @@ int clients_count = 0;
 int driver_is_active[MAX_DRIVERS] = {};
 int drivers_count = 0;
 
-
+int socket_accept_fails_cont = 0;
 
 //Will accept incoming connections
 void acceptConnections(Server server);
@@ -107,12 +106,12 @@ void driverConnectionThread(void*);
 void acceptConnections(Server server) {
     while (clients_count <= MAX_DRIVERS + MAX_CLIENTS)  //Almost equivalent to while (true)
     {
-        int i = 0;
-        int j = 0;
+        int i = -1;
+        int j = -1;
         int sock;
         //this loop finds a not vacant place in activity array
-        while (client_is_active[i++] != 0);
-        while (driver_is_active[j++] != 0);
+        while (client_is_active[++i] != 0);
+        while (driver_is_active[++j] != 0);
 
 
         //Wait for a connection and accept it
@@ -122,7 +121,12 @@ void acceptConnections(Server server) {
                           (socklen_t*)&addrlen)) < 0)   //Don't pay attention to the error here, it is not an error!!
         {
             perror("SOCKET ACCEPT FAILED");
-            exit(EXIT_FAILURE);
+            socket_accept_fails_cont++;
+
+            if(socket_accept_fails_cont > MAX_SOCKET_ACCEPT_FAILS)
+                exit(EXIT_FAILURE);
+
+            continue;
         }
 
         char* initBuff = malloc(MAX_BUFFER);
@@ -131,16 +135,17 @@ void acceptConnections(Server server) {
         if(read(sock, initBuff, MAX_BUFFER) < 0)
         {
             perror("ERROR ON READ FROM SOCKET");
-            exit(EXIT_FAILURE);
+            continue;
         }
 
         //TODO parse initBuff from JSON to obj or string
 
-        pthread_t threads[MAX_DRIVERS + MAX_CLIENTS];
+        pthread_t client_threads[MAX_CLIENTS];
+        pthread_t driver_threads[MAX_DRIVERS];
 
-        printf("%s",initBuff);
+        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d",initBuff, i, j);
 
-        if(initBuff == "0")
+        if(initBuff[0] == CLIENT)
         {
             client_is_active[i] = 1;
 
@@ -154,8 +159,8 @@ void acceptConnections(Server server) {
             memset(initBuff, 0, MAX_BUFFER);
 
             //Sending notification that message is accepted.
-            initBuff = "GOT YOUR MESSAGE BRO!";
-            send(sock, initBuff, strlen(initBuff), 0);
+            //initBuff = "GOT YOUR MESSAGE BRO!";
+            //send(sock, initBuff, strlen(initBuff), 0);
 
             //Thread parameters
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
@@ -163,9 +168,9 @@ void acceptConnections(Server server) {
             session_params->obj_type = 0;
 
             //Creation of the thread in which connection is maintained.
-            pthread_create(&threads[i], NULL, startSession, session_params);
+            pthread_create(&client_threads[i], NULL, startSession, session_params);
         }
-        else if(initBuff == "1")
+        else if(initBuff[0] == DRIVER)
         {
             driver_is_active[j] = 1;
             //driver_is_active[j] = (*server.drivers[j]).id;
@@ -176,18 +181,21 @@ void acceptConnections(Server server) {
 
             memset(initBuff, 0, MAX_BUFFER);
             //Sending notification that message is accepted.
-            initBuff = "Hello from Server\n";
-            send(sock, initBuff, strlen(initBuff), 0);
+            //initBuff = "Hello from Server\n";
+            //send(sock, initBuff, strlen(initBuff), 0);
 
 
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
             session_params->obj = server.drivers[j];
             session_params->obj_type = 1;
-            pthread_create(&threads[j], NULL, startSession, session_params);
+            pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
-        } else if(initBuff == "2")
+        } else if(initBuff[0] == SERVER)
         {
             //Admin connected here
+        } else
+        {
+            printf("WRONG INITIAL BYTE SENT!\n");
         }
 
     }

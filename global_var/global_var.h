@@ -12,5 +12,6 @@
 
 #define INPUT_STRING_LENGTH 125
 #define MAX_MESSAGE_SIZE 4096
+#define MAX_SOCKET_ACCEPT_FAILS 3;
 
 //TODO We need to read port and IP from config file
