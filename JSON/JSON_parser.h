@@ -22,14 +22,23 @@ Location* json_GetLocationFromJson(char* json_string) {
         lon = lon_item->valueint;
     }
     if (cJSON_IsNumber(lat_item)) {
-        lon = at_item->valueint;
+        lat = lat_item->valueint;
     }
 
     Location* location = malloc(sizeof(Location));
     location->longitude = lon;
-    location->yanghwa = 0;
+    location->latitude = lat;
 
     return location;
+}
+
+char* json_getJsonFromLocation(Location location) {
+    cJSON* root;
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "longitude", location.longitude);
+    cJSON_AddNumberToObject(root, "latitude", location.latitude);
+
+    return cJSON_Print(root);
 }
 
 Client* json_GetClientFromJson(char* json_string) {
@@ -43,7 +52,6 @@ Client* json_GetClientFromJson(char* json_string) {
     int isUp = 0;
     char* name;
     char* phoneNumber;
-    double framerate = 0;
 
     if (cJSON_IsNumber(id_item)) {
         id = id_item->valueint;
@@ -75,6 +83,15 @@ char* json_getJsonFromClient(Client client) {
     cJSON_AddNumberToObject(root, "isUp", client.isUp);
     cJSON_AddStringToObject(root, "name", client.name);
     cJSON_AddStringToObject(root, "phoneNumber", client.phoneNumber);
+
+    return cJSON_Print(root);
+}
+
+char* json_getJsonFromAuthData(int id, char* password) {
+    cJSON* root;
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "id", location.longitude);
+    cJSON_AddStringToObject(root, "password", client.name);
 
     return cJSON_Print(root);
 }
