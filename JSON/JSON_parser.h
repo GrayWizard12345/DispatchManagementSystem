@@ -7,6 +7,30 @@
 #include <stdlib.h>
 #include "cJSON.h"
 #include "Client.h"
+#include "Location.h"
+#include "Order.h"
+#include "Driver.h"
+
+Location* json_GetLocationFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *lon_item = cJSON_GetObjectItemCaseSensitive(root, "longitude");
+    cJSON *lat_item = cJSON_GetObjectItemCaseSensitive(root, "latitude");
+
+    double lon = 0, lat = 0;
+
+    if (cJSON_IsNumber(lon_item)) {
+        lon = lon_item->valueint;
+    }
+    if (cJSON_IsNumber(lat_item)) {
+        lon = at_item->valueint;
+    }
+
+    Location* location = malloc(sizeof(Location));
+    location->longitude = lon;
+    location->yanghwa = 0;
+
+    return location;
+}
 
 Client* json_GetClientFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
