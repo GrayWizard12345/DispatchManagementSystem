@@ -9,11 +9,11 @@ typedef enum MESSAGE_TYPE MESSAGE_TYPE;
 typedef enum STATE STATE;
 
 enum USER_TYPE{
-    CLIENT = 48, DRIVER, SERVER
+    CLIENT, DRIVER, SERVER
 };
 
 enum MESSAGE_TYPE{
-    AUTH
+    AUTH, ORDER_GET
 };
 
 enum STATE{

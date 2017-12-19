@@ -7,14 +7,16 @@
 #include "../Structures/Driver.h"
 
 void printWaitingMessage() {
-    printf("\t\t Waiting for the order\n");
+    printf("\n\n\t\t Waiting for the order\n");
     printf("-------------------------------\n");\
 }
 
 void printWelcomeMessage(){
+    printf("You have sucessfully logged in");
+    sleep(1000);
+    system("clear");
     printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
-    printf("\t\tYou have sucessfully logged in");
-    printf("\n\nOperator will assign an order to you soon\n");
+    printf("Operator will assign an order to you soon\n");
     printWaitingMessage();
 }
 
@@ -37,7 +39,7 @@ void driverWaitingClientView () {
     printf("Waiting for the client\n");
 }
 
-void driverDriveView (double latitude, double longitude) {
+/*void driverDriveView (double latitude, double longitude) {
     printf("Driving\n");
     printf("Destination: %lf, %lf\n", latitude,longitude);
     printf("------------------------------\n");
@@ -53,4 +55,4 @@ void driverDriveView (double latitude, double longitude) {
         default:
             break;
     }
-}
+}*/

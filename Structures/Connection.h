@@ -33,7 +33,7 @@ Connection connectToServer() {
     struct sockaddr_in serv_addr;
     printf("CREATING SOCKET .....\n");
 
-    Connection c;
+    Connection c = connectionInit(0, serv_addr);
 
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
@@ -52,11 +52,14 @@ Connection connectToServer() {
     }
 
     if (connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
-    printf("CONNECTING ON PORT %d TO COMMUNICATE WITH SERVER.....\n", DEFAULT_PORT);
+        printf("CONNECTING ON PORT %d TO COMMUNICATE WITH SERVER.....\n", DEFAULT_PORT);
         printf("\nConnection Failed \n");
         return c;
     }
 
-    c = connectionInit(sock, serv_addr);
+    printf("CONNECTED SUCCESSFULLY\n");
+
+    c.socket = sock;
+    c.address = serv_addr;
     return c;
 }

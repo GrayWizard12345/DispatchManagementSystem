@@ -44,7 +44,10 @@ Driver* initDriver(Connection *conn) {
     driver->location.longitude = 60;
     memset(driver->password, 0, sizeof(driver->password));
 
-    send(driver->connection->socket, DRIVER, 1, 0);
+    char type[1];
+    sprintf(type, "%d", DRIVER);
+    send(driver->connection->socket, type, 1, 0);
+    printf("SENT INFO TO SERVER\n");
 
     return driver;
 }
