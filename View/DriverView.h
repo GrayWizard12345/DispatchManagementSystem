@@ -12,8 +12,9 @@ void printWaitingMessage() {
 }
 
 void printWelcomeMessage(){
-    printf("You have sucessfully logged in");
-    sleep(1000);
+    printf("You have sucessfully logged in\n\n");
+    fflush(stdin);
+    sleep(1);
     system("clear");
     printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
     printf("Operator will assign an order to you soon\n");

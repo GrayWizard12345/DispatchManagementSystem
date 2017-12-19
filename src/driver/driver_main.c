@@ -36,20 +36,7 @@ int main() {
 
     printWelcomeMessage();
 
-    //startThreadForNotification();
-
-    int argc;
-    char ** argv;
-    int i;
-    const char * test = "  a b d def ghij-klm nop  qrst";
-
-    if (argc_argv (test, & argc, & argv) != OK) {
-        fprintf (stderr, "Something went wrong.\n");
-        exit (EXIT_FAILURE);
-    }
-    for (i = 0; i < argc; i++) {
-        printf ("%d: %s\n", i, argv[i]);
-    }
+    startThreadForNotification();
 
 
     //freeDriver(driver);
@@ -63,10 +50,17 @@ void printMessage(char* message){
 
 void startThreadForNotification(){
     char recMessage[MAX_MESSAGE_SIZE];
-    char *splittedMess;
+    int argc;
+    char ** argv;
+
     while(driver->isUp == 1){
         memset(recMessage, 0, sizeof(recMessage));
-        splittedMess = strtok (recMessage, " ");
-        printf("%s", splittedMess[0]);
+        read(driver->connection->socket, recMessage, sizeof(recMessage));
+        if (argc_argv (recMessage, & argc, & argv) != OK) {
+            fprintf (stderr, "Something went wrong.\n");
+            exit (EXIT_FAILURE);
+        }
+        fflush(stdout);
+        printf("%s", argv[0]);
     }
 }
