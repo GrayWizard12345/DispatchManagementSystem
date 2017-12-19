@@ -4,16 +4,33 @@
 
 #include <stdlib.h>
 #include <stdio.h>
-#include "../Structures/Structures.h"
+#include <signal.h>
+#include<unistd.h>
+#include "../../Structures/Structures.h"
 
 
 struct Server server;
 
+void sig_int_handler(int sig)
+{
+    if(sig == SIGINT)
+    {
+
+        printf("SIGINT handled! SOCKET IS CLOSES NOW");
+        if(close(server.connection->socket) < 0)
+        {
+            exit(1);
+        }
+    }
+}
 
 
 // Main thread
 int main(int argc, char** argv)
 {
+
+    if (signal(SIGINT, sig_int_handler) == SIG_ERR)
+        printf("\ncan't catch SIGINT\n");
 
     // serverInit() is responsible for initialization of
     // (a.k.a memory allocation for) clients and drivers

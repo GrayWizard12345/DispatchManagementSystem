@@ -9,3 +9,5 @@
 #include "Location.h"
 #include "Order.h"
 #include "Server.h"
+#include "../global_var/enums.h"
+
