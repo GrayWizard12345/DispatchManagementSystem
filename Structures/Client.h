@@ -6,13 +6,17 @@
 
 #include "../Structures/Connection.h"
 #include "Order.h"
+#include <stdbool.h>
 
-void client_setPrivateInformationMethod(void* client, char* name, char* phoneNumber);
+void client_orderTaxi(void* client, Order order);
+void client_cancelOrder(void* client, Order order);
+void client_setOrder(void* client, Order order);
+void client_setPrivateInformation(void* client, char* name, char* phoneNumber);
 void client_setConnection(void* client, Connection connection);
+bool client_orderExists(void* client);
 
 typedef struct Client Client;
 struct Client {
-
     Connection connection;
     Order order;
     int id;
@@ -20,15 +24,77 @@ struct Client {
     char* phoneNumber;
     char* name;
 
+    void (*orderTaxi)(void* client, Order order);
+    void (*cancelOrder)(void* client, Order order);
+    void (*setOrder)(void* client, Order order);
+    void (*setPrivateInformation)(void* client, char* name, char* phoneNumber);
+    void (*setConnection)(void* client, Connection connection);
+    void (*orderExists)(void* client);
 
 }clientInit() {
     printf("Client constructor called!\n");
 
     struct Client* client = malloc(sizeof(struct Location));
+    client->order = nullptr;
 
-    return *client;
+    client->orderTaxi = client_orderTaxi;
+    client->cancelOrder = client_cancelOrder;
+    client->setOrder = client_setOrder;
+    client->setPrivateInformation = client_setPrivateInformationMethod;
+    client->setConnection = client_setConnection;
+    client->orderExists = client_orderExists;
+
+    Client client1 = *client;
+    free(client);
+    return client1;
 };
 
+void client_setPrivateInformation(void* client, char* name, char* phoneNumber) {
+    Client *c = client;
+    c->name = name;
+    c->phoneNumber = phoneNumber;
+}
 
+void client_setConnection(void* client, Connection connection) {
+    Client *c = client;
+    c->connection = connection;
+}
 
-//test
+void client_setOrder(void* client, Order order) {
+    Client* c = client;
+    order.clientPhoneNumber = c->phoneNumber;
+    order.clientName = c->name;
+    c->order = order;
+}
+
+void client_orderTaxi(void* client) {
+    Client* c = client;
+    if(c->orderExists) {
+        /*
+         * -- Server code --
+         * Order a taxi.
+         * Register order in a server
+        */
+    }
+}
+
+void client_cancelOrder(void* client) {
+    Client* c = client;
+    if(c->orderExists) {
+        /*
+         * -- Server code --
+         * Cancel order and notify server about it
+         */
+        c->order = nullptr;
+    } else {
+        /*
+         * Order does not exist.
+         * Notify user
+         */
+    }
+}
+
+bool client_orderExists(void* client) {
+    Client* c = client;
+    return (c->order != nullptr);
+}
