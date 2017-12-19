@@ -16,7 +16,8 @@ void sig_int_handler(int sig)
     if(sig == SIGINT)
     {
 
-        printf("SIGINT handled! SOCKET IS CLOSES NOW");
+        printf("SIGINT handled! SOCKET IS CLOSED NOW");
+        free(server.connection);
         if(close(server.connection->socket) < 0)
         {
             exit(1);

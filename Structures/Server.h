@@ -17,10 +17,6 @@
 #include "Structures.h"
 #include "../global_var/enums.h"
 
-
-#define CLIENT_OBJ 0
-#define DRIVER_OBJ 1
-
 typedef struct Server Server;
 struct Server {
 
@@ -144,7 +140,7 @@ void acceptConnections(Server server) {
         pthread_t client_threads[MAX_CLIENTS];
         pthread_t driver_threads[MAX_DRIVERS];
 
-        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d",initBuff, i, j);
+        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d",initBuff, i, j, CLIENT);
 
         if(initBuff[0] == CLIENT)
         {
@@ -166,7 +162,7 @@ void acceptConnections(Server server) {
             //Thread parameters
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
             session_params->obj = server.clients[i];
-            session_params->obj_type = 0;
+            session_params->obj_type = CLIENT;
 
             //Creation of the thread in which connection is maintained.
             pthread_create(&client_threads[i], NULL, startSession, session_params);
@@ -188,7 +184,7 @@ void acceptConnections(Server server) {
 
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
             session_params->obj = server.drivers[j];
-            session_params->obj_type = 1;
+            session_params->obj_type = DRIVER;
             pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
         } else if(initBuff[0] == SERVER)
@@ -216,7 +212,7 @@ void* startSession(void* params) {
     Driver* driver;
     //Here we are ready to get/exchange messages with client or driver!
     switch (obj_type) {
-        case CLIENT_OBJ:
+        case CLIENT:
 
             client = session_params->obj;
             while (client->isUp == 1)
@@ -255,7 +251,7 @@ void* startSession(void* params) {
             }
             break; //End of case 0
 
-        case DRIVER_OBJ:
+        case DRIVER:
 
             driver = session_params->obj;
             while (driver->isUp == 1)
@@ -301,7 +297,7 @@ void* startSession(void* params) {
             exit(EXIT_FAILURE);
             break;
     }
-    if(obj_type == CLIENT_OBJ)
+    if(obj_type == CLIENT)
     {
         close(client->connection.socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
