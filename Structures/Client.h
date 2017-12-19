@@ -18,7 +18,7 @@ bool client_orderExists(void* client);
 typedef struct Client Client;
 struct Client {
     Connection connection;
-    Order order;
+    Order* order;
     int id;
     int isUp;
     char* phoneNumber;
@@ -35,12 +35,12 @@ struct Client {
     printf("Client constructor called!\n");
 
     struct Client* client = malloc(sizeof(struct Location));
-    client->order = nullptr;
+    client->order = NULL;
 
     client->orderTaxi = client_orderTaxi;
     client->cancelOrder = client_cancelOrder;
     client->setOrder = client_setOrder;
-    client->setPrivateInformation = client_setPrivateInformationMethod;
+    //client->setPrivateInformation = client_setPrivateInformationMethod;
     client->setConnection = client_setConnection;
     client->orderExists = client_orderExists;
 
@@ -64,10 +64,10 @@ void client_setOrder(void* client, Order order) {
     Client* c = client;
     order.clientPhoneNumber = c->phoneNumber;
     order.clientName = c->name;
-    c->order = order;
+    //c->order = order;
 }
 
-void client_orderTaxi(void* client) {
+/*void client_orderTaxi(void* client) {
     Client* c = client;
     if(c->orderExists) {
         /*
@@ -75,26 +75,26 @@ void client_orderTaxi(void* client) {
          * Order a taxi.
          * Register order in a server
         */
-    }
-}
+    /*}
+}*/
 
-void client_cancelOrder(void* client) {
+/*void client_cancelOrder(void* client) {
     Client* c = client;
     if(c->orderExists) {
         /*
          * -- Server code --
          * Cancel order and notify server about it
          */
-        c->order = nullptr;
+        /*c->order = nullptr;
     } else {
         /*
          * Order does not exist.
          * Notify user
          */
-    }
-}
+    /*}
+}*/
 
 bool client_orderExists(void* client) {
     Client* c = client;
-    return (c->order != nullptr);
+    return (c->order != NULL);
 }

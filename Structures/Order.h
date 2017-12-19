@@ -3,18 +3,23 @@
 //
 
 #pragma once
+
 #include "Location.h"
+#include "Order.h"
+
+typedef struct Order Order;
 
 void order_setSource(Order* order, Location source);
 void order_setDestination(Order* order, Location destination);
 
-typedef struct Order Order;
 struct Order {
 
     struct Location source;
     struct Location destination;
     char* clientName;
     char* clientPhoneNumber;
+    int userId;
+
 
     void (*setSource)(void* order, Location source);
     void (*setDestination)(void* order, Location destination);

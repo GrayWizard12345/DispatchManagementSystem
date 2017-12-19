@@ -18,8 +18,11 @@
 
 int main(int argc, char const *argv[]) {
     Connection* c = connectToServer();
+    if(c == NULL)
+        return 0;
+
     Driver* driver = initDriver(c);
-    authDriver();
+    authDriver(driver);
 
 
     /*char readMessage[1024];
@@ -36,9 +39,9 @@ int main(int argc, char const *argv[]) {
         sendMessage[strlen(sendMessage)] = '\0';
         if(strncmp(sendMessage, "bye", strlen("bye"))==0)
             break;
-    }
+    }*/
 
-    freeDriver(driver);*/
+    freeDriver(driver);
 
     return 0;
 }
