@@ -5,6 +5,8 @@
 #pragma once
 
 #include <stdio.h>
+#include <string.h>
+#include <sys/socket.h>
 
 
 #include "Connection.h"
@@ -16,15 +18,17 @@ typedef struct Driver Driver;
 
 int getID();
 void getPassword(char *password);
+void sendAuthMessage(Driver*);
+void receiveAuthMessage(Driver*);
 
 struct Driver {
     Connection *connection;
     int isUp;
     int id;
-    char password[STRING_LENGTH];
+    char password[INPUT_STRING_LENGTH];
 };
 
-Driver *initDriver(Connection *conn) {
+Driver* initDriver(Connection *conn) {
     Driver *driver = malloc(sizeof(Driver));
     driver->connection = conn;
     driver->isUp = 1;
@@ -42,19 +46,33 @@ void authDriver(Driver *driver) {
     driver->id = getID();
     getPassword(driver->password);
 
-    sendAuthMessage(driver);
+    printf("sdfsdf");
 
+    sendAuthMessage(driver);
+    receiveAuthMessage(driver);
 }
 
 void sendAuthMessage(Driver* driver){
-    char authMessage[1024];
+    char authMessage[MAX_MESSAGE_SIZE];
+    printf("set to 0");
+    memset(authMessage, 0, sizeof(authMessage));
+    //TODO change to JSON encoder, not manually
     getAuthJSON(authMessage, driver->id, driver->password);
     printf("Auth message: %s", authMessage);
+    if(driver->connection == NULL)
+        printf("It is null");
+    send(driver->connection->socket, "65", 2, 0);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
 }
 
+void receiveAuthMessage(Driver* driver){
+    char authMessage[MAX_MESSAGE_SIZE];
+    memset(authMessage, 0, sizeof(authMessage));
+    read(driver->connection->socket, authMessage, sizeof(authMessage));
+}
+
 int getID() {
-    printf("Write your ID");
+    printf("Write your ID ");
     int ID;
     scanf("%d", &ID);
     return ID;
@@ -62,8 +80,7 @@ int getID() {
 
 void getPassword(char *password) {
     getchar();
-    printf("Write your password");
+    printf("Write your password ");
     fgets(password, sizeof(password), stdin);
     printf("password: %s", password);
-    strtok(password, "\n");
 }
