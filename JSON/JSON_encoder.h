@@ -5,7 +5,8 @@
 #pragma once
 
 #include <stdio.h>
+#include "../global_var/enums.h"
 
 char* getAuthJSON(char* authMessage, int id, char* password) {
-    sprintf(authMessage, "{\"id\": %d, \"password\": \"%s\"}", id, password);
+    sprintf(authMessage, "%d %d %s", AUTH, id, password);
 }

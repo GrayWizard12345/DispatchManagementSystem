@@ -26,12 +26,12 @@ struct Order {
 
 } orderInit() {
     printf("Order's constructor invoked");
-    Order* order = malloc(sizeof(Order));
+    struct Order* order = malloc(sizeof(Order));
 
     // -1 indicates, that order Currently does not belong to any user
     order->userId = -1;
 
-    Order order1 = *order;
+    struct Order order1 = *order;
     free(order);
     return order1;
 };

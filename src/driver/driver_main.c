@@ -15,33 +15,40 @@
 
 #include "../../Structures/Connection.h"
 #include "../../Structures/Driver.h"
+#include "../../View/DriverView.h"
+#include "../../global_var/global_var.h"
+
+Driver* driver;
+char sendMessage[MAX_MESSAGE_SIZE];
+
+void startThreadForNotification();
+void printMessage(char*);
 
 int main(int argc, char const *argv[]) {
     Connection c = connectToServer();
     if(c.socket == 0)
         return 0;
 
-    Driver* driver = initDriver(&c);
+    driver = initDriver(&c);
     authDriver(driver);
 
+    printWelcomeMessage();
 
-    /*char readMessage[1024];
-    char sendMessage[1024];
-    while(1)
-    {
-        memset(readMessage, 0, sizeof(readMessage));
-        memset(sendMessage, 0, sizeof(sendMessage));
-        printf("CLIENT : ");
-        fgets (sendMessage, sizeof(sendMessage), stdin);
-        send(c->socket , sendMessage , strlen(sendMessage) , 0 );
-        read(c->socket , readMessage, 1024);
-        printf("%s\n", readMessage );
-        sendMessage[strlen(sendMessage)] = '\0';
-        if(strncmp(sendMessage, "bye", strlen("bye"))==0)
-            break;
-    }*/
+
 
     freeDriver(driver);
 
     return 0;
+}
+
+void printMessage(char* message){
+
+}
+
+void startThreadForNotification(){
+    char recMessage[MAX_MESSAGE_SIZE];
+    while(driver->isUp == 1){
+        memset(recMessage, 0, sizeof(recMessage));
+
+    }
 }

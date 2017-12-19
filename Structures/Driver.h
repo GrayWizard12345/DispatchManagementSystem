@@ -10,11 +10,14 @@
 
 
 #include "Connection.h"
+#include "Location.h"
+#include "Vehicle.h"
+#include "Order.h"
 #include "../JSON/JSON_encoder.h"
 #include "../global_var/global_var.h"
+#include "../global_var/enums.h"
 
 typedef struct Driver Driver;
-
 
 int getID();
 void getPassword(char *password);
@@ -23,6 +26,10 @@ void receiveAuthMessage(Driver*);
 
 struct Driver {
     Connection *connection;
+    Location location;
+    Vehicle vehicle;
+    STATE state;
+    Order currentOrder;
     int isUp;
     int id;
     char password[INPUT_STRING_LENGTH];
@@ -31,14 +38,18 @@ struct Driver {
 Driver* initDriver(Connection *conn) {
     Driver *driver = malloc(sizeof(Driver));
     driver->connection = conn;
+    driver->state = FREE;
     driver->isUp = 1;
-    driver->id = 0;
+    driver->location.latitude = 48;
+    driver->location.longitude = 60;
     memset(driver->password, 0, sizeof(driver->password));
+
+    send(driver->connection->socket, DRIVER, 1, 0);
+
     return driver;
 }
 
 void freeDriver(Driver *driver) {
-    free(driver->password);
     free(driver->connection);
     free(driver);
 }
@@ -57,7 +68,6 @@ void sendAuthMessage(Driver* driver){
     //TODO change to JSON encoder, not manually
     getAuthJSON(authMessage, driver->id, driver->password);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
-    receiveAuthMessage(driver);
 }
 
 void receiveAuthMessage(Driver* driver){
@@ -65,7 +75,8 @@ void receiveAuthMessage(Driver* driver){
     memset(authMessage, 0, sizeof(authMessage));
     read(driver->connection->socket, authMessage, sizeof(authMessage));
     printf("received: %s", authMessage);
-    //parse and get Driver
+    //parse and get other fields of Driver
+    //if wrong exit(0);
 }
 
 int getID() {
@@ -80,3 +91,4 @@ void getPassword(char *password) {
     printf("Write your password ");
     fgets(password, sizeof(password), stdin);
 }
+
