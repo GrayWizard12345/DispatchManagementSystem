@@ -21,21 +21,23 @@ struct Connection {
     struct sockaddr_in address;
 };
 
-Connection* connectionInit(int socket, struct sockaddr_in address){
-    Connection* c = malloc(sizeof(Connection));
-    c->socket = socket;
-    c->address = address;
+Connection connectionInit(int socket, struct sockaddr_in address){
+    Connection c;
+    c.socket = socket;
+    c.address = address;
     return c;
 };
 
-Connection* connectToServer() {
+Connection connectToServer() {
     int sock = 0;
     struct sockaddr_in serv_addr;
     printf("CREATING SOCKET .....\n");
 
+    Connection c;
+
     if ((sock = socket(AF_INET, SOCK_STREAM, 0)) < 0) {
         printf("\n Socket creation error \n");
-        return NULL;
+        return c;
     }
 
     printf("DEFINING SOCKET FAMILY, ADDRESS & PORT .....\n");
@@ -46,15 +48,15 @@ Connection* connectToServer() {
     // Convert IPv4 and IPv6 addresses from text to binary form
     if (inet_pton(AF_INET, SERVER_IP, &serv_addr.sin_addr) <= 0) {
         printf("\nInvalid address/ Address not supported \n");
-        return NULL;
+        return c;
     }
 
     if (connect(sock, (struct sockaddr *) &serv_addr, sizeof(serv_addr)) < 0) {
     printf("CONNECTING ON PORT %d TO COMMUNICATE WITH SERVER.....\n", DEFAULT_PORT);
         printf("\nConnection Failed \n");
-        return NULL;
+        return c;
     }
 
-    Connection* c = connectionInit(sock, serv_addr);
+    c = connectionInit(sock, serv_addr);
     return c;
 }

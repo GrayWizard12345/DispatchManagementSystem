@@ -17,11 +17,11 @@
 #include "../../Structures/Driver.h"
 
 int main(int argc, char const *argv[]) {
-    Connection* c = connectToServer();
-    if(c == NULL)
+    Connection c = connectToServer();
+    if(c.socket == 0)
         return 0;
 
-    Driver* driver = initDriver(c);
+    Driver* driver = initDriver(&c);
     authDriver(driver);
 
 

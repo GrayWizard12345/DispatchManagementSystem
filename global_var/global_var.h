@@ -13,6 +13,4 @@
 #define INPUT_STRING_LENGTH 125
 #define MAX_MESSAGE_SIZE 4096
 
-/*
- * We need to read port and IP from config file
- */
+//TODO We need to read port and IP from config file
