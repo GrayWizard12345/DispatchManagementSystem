@@ -4,7 +4,7 @@
 
 #pragma once
 
-#include "Connection.h"
+#include "../Structures/Connection.h"
 #include "Order.h"
 
 void client_setPrivateInformationMethod(void* client, char* name, char* phoneNumber);

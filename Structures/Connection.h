@@ -17,7 +17,7 @@
 #define MAX_CLIENTS 512
 #define DEFAULT_PORT 60666
 
-
+//TODO why do we need IP if there is IP in sockaddr_in
 typedef struct Connection Connection;
 struct Connection {
 
@@ -26,11 +26,14 @@ struct Connection {
     int socket;
     int port;
     struct sockaddr_in address;
-
     //TODO methods to be added
+};
 
-} connectionInit(){
-
-    //TODO connection initializer
-
+Connection connectionInit(char* ip, int socket, int port, struct sockaddr_in address){
+    Connection c;
+    c.ip = ip;
+    c.socket = socket;
+    c.port = port;
+    c.address = address;
+    return c;
 };

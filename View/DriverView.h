@@ -30,17 +30,12 @@ void driverHasOrderView (double latitude, double longitude) {
     printf("--------------------------\n");
     printf("1.Arrived to pick up\n");
 
+    int choice = 0;
     while (choice != 1) {
         scanf("%d", &choice);
     }
 
-    switch (choice) {
-
-        case 1:
-            break;
-        default:
-            break;
-    }
+    //send message to server
 }
 
 void driverWaitingClientView () {

@@ -29,6 +29,7 @@ int main(int argc, char** argv)
         perror("socket creation failed");
         exit(EXIT_FAILURE);
     }
+
     printf("DEFINING SERVER SOCKET OPTIONS, FAMILY, ADDRESS & PORT .....\n");
 
     if (setsockopt(server.connection->socket, SOL_SOCKET, SO_REUSEADDR | SO_REUSEPORT, &server.opt, sizeof(server.opt)))
