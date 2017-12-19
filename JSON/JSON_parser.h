@@ -6,10 +6,10 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include "cJSON.h"
-#include "Client.h"
-#include "Location.h"
-#include "Order.h"
-#include "Driver.h"
+#include "../Structures/Client.h"
+#include "../Structures/Location.h"
+#include "../Structures/Order.h"
+#include "../Structures/Driver.h"
 
 Location* json_GetLocationFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);

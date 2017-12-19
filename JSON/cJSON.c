@@ -2745,7 +2745,7 @@ CJSON_PUBLIC(cJSON_bool) cJSON_Compare(const cJSON * const a, const cJSON * cons
 
 CJSON_PUBLIC(void *) cJSON_malloc(size_t size)
 {
-return global_hooks.allocate(size);
+    return global_hooks.allocate(size);
 }
 
 CJSON_PUBLIC(void) cJSON_free(void *object)
