@@ -9,7 +9,7 @@
 
 #include "Connection.h"
 #include "../JSON/JSON_encoder.h"
-#include "../glabal_var/global_var.h"
+#include "../global_var/global_var.h"
 
 typedef struct Driver Driver;
 

@@ -7,6 +7,7 @@
 #include "../Structures/Connection.h"
 #include "Order.h"
 #include <stdbool.h>
+#defile nullptr NULL
 
 void client_orderTaxi(void* client, Order order);
 void client_cancelOrder(void* client, Order order);
@@ -40,7 +41,7 @@ struct Client {
     client->orderTaxi = client_orderTaxi;
     client->cancelOrder = client_cancelOrder;
     client->setOrder = client_setOrder;
-    //client->setPrivateInformation = client_setPrivateInformationMethod;
+    client->setPrivateInformation = client_setPrivateInformation;
     client->setConnection = client_setConnection;
     client->orderExists = client_orderExists;
 
@@ -75,7 +76,7 @@ void client_setOrder(void* client, Order order) {
          * Order a taxi.
          * Register order in a server
         */
-    /*}
+/*}
 }*/
 
 /*void client_cancelOrder(void* client) {
@@ -85,13 +86,13 @@ void client_setOrder(void* client, Order order) {
          * -- Server code --
          * Cancel order and notify server about it
          */
-        /*c->order = nullptr;
-    } else {
-        /*
-         * Order does not exist.
-         * Notify user
-         */
-    /*}
+/*c->order = nullptr;
+} else {
+/*
+ * Order does not exist.
+ * Notify user
+ */
+/*}
 }*/
 
 bool client_orderExists(void* client) {

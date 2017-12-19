@@ -12,7 +12,7 @@
 #include <stdlib.h>
 #include <netinet/in.h>
 
-#include "../glabal_var/global_var.h"
+#include "../global_var/global_var.h"
 
 typedef struct Connection Connection;
 
