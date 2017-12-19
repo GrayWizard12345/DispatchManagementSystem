@@ -21,10 +21,8 @@
 typedef struct Connection Connection;
 struct Connection {
 
-    //Attributes
-    char* ip;
+    //Attribute
     int socket;
-    int port;
     struct sockaddr_in address;
     //TODO methods to be added
 };
