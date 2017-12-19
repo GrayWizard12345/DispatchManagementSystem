@@ -20,18 +20,13 @@
 //TODO why do we need IP if there is IP in sockaddr_in
 typedef struct Connection Connection;
 struct Connection {
-
-    //Attribute
     int socket;
     struct sockaddr_in address;
-    //TODO methods to be added
 };
 
-Connection connectionInit(char* ip, int socket, int port, struct sockaddr_in address){
-    Connection c;
-    c.ip = ip;
-    c.socket = socket;
-    c.port = port;
-    c.address = address;
+Connection* connectionInit(int socket, struct sockaddr_in address){
+    Connection* c = malloc(sizeof(Connection));
+    c->socket = socket;
+    c->address = address;
     return c;
 };
