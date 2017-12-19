@@ -41,9 +41,9 @@ int main(int argc, char** argv)
     server.connection->address.sin_family = AF_INET;
     server.connection->address.sin_addr.s_addr = INADDR_ANY;
     server.connection->address.sin_port = htons( DEFAULT_PORT );
-    printf("BINDING SERVER SOCKET TO PORT 8080 .....\n");
+    printf("BINDING SERVER SOCKET TO PORT %d .....\n", DEFAULT_PORT);
 
-    // Forcefully attaching socket to the port 8080
+    // Forcefully attaching socket to the DEFAULT_PORT
     if (bind(server.connection->socket, (struct sockaddr *)&server.connection->address, sizeof(server.connection->address))<0)
     {
         perror("socket bind failed");
@@ -51,7 +51,7 @@ int main(int argc, char** argv)
     }
 
     //Listening...
-    printf("SERVER LISTENING ON PORT 8080 FOR NEW CONNECTION.....\n");
+    printf("SERVER LISTENING ON PORT %d FOR NEW CONNECTION.....\n", DEFAULT_PORT);
     //We wait for at most MAX_DRIVERS + MAX_CLIENTS connections,
     if (listen(server.connection->socket, MAX_DRIVERS + MAX_CLIENTS) < 0)
     {

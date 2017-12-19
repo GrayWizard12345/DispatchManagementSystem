@@ -14,6 +14,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <stdio.h>
+#include "Structures.h"
 
 
 
@@ -111,10 +112,12 @@ void acceptConnections(Server server) {
         while (client_is_active[0][i++] != 0);
         while (driver_is_active[0][j++] != 0);
 
+
         //Wait for a connection and accept it
+        int addrlen = sizeof(server.connection->address);
         if((sock = accept(server.connection->socket,
                           (struct sockaddr*)&server.connection->address,
-                          (socklen_t*)&server.connection->address)) < 0)
+                          (socklen_t*)&addrlen)) < 0)   //Don't pay attention to the error here, it is not an error!!
         {
             perror("SOCKET ACCEPT FAILED");
             exit(EXIT_FAILURE);
@@ -133,13 +136,15 @@ void acceptConnections(Server server) {
 
         pthread_t thread_id;
 
-        if(Condition to check client type)
+        printf("%s",initBuff);
+
+        if(initBuff == "hello")
         {
             client_is_active[0][i] = 1;
             //TODO initialize client id, get it from JSON object
             client_is_active[1][i] = (*server.clients[i]).id;
             (*server.clients[i]).isUp = 1;
-            (*server.clients[i]).connection->socket = sock;
+            (*server.clients[i]).connection.socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             //Code can be optimized, as the same function is called in else branch
@@ -163,11 +168,12 @@ void acceptConnections(Server server) {
             //TODO initialize client id, get it from JSON object
             driver_is_active[1][j] = (*server.drivers[j]).id;
             (*server.drivers[i]).isUp = 1;
-            (*server.drivers[j]).connection->socket = sock;
+            (*server.drivers[j]).connection.socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             memset(initBuff, 0, MAX_BUFFER);
             //Sending notification that message is accepted.
+            initBuff = "Hello from Server\n";
             send(sock, initBuff, strlen(initBuff), 0);
 
 
@@ -188,10 +194,9 @@ void* startSession(void* params) {
     //Getting parameters... Hope this gonna work...
     struct Session_params* session_params = params;
     int obj_type = session_params->obj_type;
-    void* obj = session_params->obj;
 
     int message_t;
-    char* buffer[MAX_BUFFER];
+    char buffer[MAX_BUFFER];
 
     Client* client;
     Driver* driver;
@@ -199,16 +204,18 @@ void* startSession(void* params) {
     switch (obj_type) {
         case CLIENT_OBJ:
 
-            client = obj;
+            client = session_params->obj;
             while (client->isUp == 1)
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
-                read(client->connection->socket, buffer, MAX_BUFFER);
+                read(client->connection.socket, buffer, MAX_BUFFER);
 
+                printf("Dlient: %s" , buffer);
                 //TODO parse obtained JSON
                 message_t = rand(); //get message type form JSON
 
+                send(client->connection.socket,buffer, strlen(buffer), 0);
                 //React to client message
                 switch (message_t)
                 {
@@ -228,15 +235,18 @@ void* startSession(void* params) {
 
         case DRIVER_OBJ:
 
-            driver = obj;
+            driver = session_params->obj;
             while (driver->isUp == 1)
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
-                read(client->connection->socket, buffer, MAX_BUFFER);
+                read(driver->connection.socket, buffer, MAX_BUFFER);
 
                 //TODO parse obtained JSON
                 message_t = rand(); //get message type form JSON
+                printf("Dlient_sent: %s" , buffer);
+
+                send(driver->connection.socket,buffer, MAX_BUFFER, 0);
 
                 switch (message_t)
                 {
