@@ -15,6 +15,7 @@
 #include <pthread.h>
 #include <stdio.h>
 #include "Structures.h"
+#include "../global_var/enums.h"
 
 
 #define CLIENT_OBJ 0
@@ -228,9 +229,9 @@ void* startSession(void* params) {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
                     perror(error);
-                    free(client);
+                    close(client->connection.socket);
                 } else if(read_status == 0)
-                    continue;
+                    break;
 
                 printf("Client_%d: %s" ,client->id,buffer);
                 //TODO parse obtained JSON
@@ -262,13 +263,17 @@ void* startSession(void* params) {
                 memset(buffer, 0 , MAX_BUFFER);
 
                 int read_status;
-                if(( read_status = read(driver->connection->socket, buffer, MAX_BUFFER)) < 0);
-
+                if(( read_status = read(driver->connection->socket, buffer, MAX_BUFFER)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH DRIVER_%d IS LOST\n", driver->id);
                     perror(error);
-                    free(client);
+                    close(driver->connection->socket);
+                    break;
+                }
+                if(read_status == 0)
+                {
+                    break;
                 }
                 //TODO parse obtained JSON
                 message_t = rand(); //get message type form JSON
@@ -297,8 +302,23 @@ void* startSession(void* params) {
             break;
     }
     if(obj_type == CLIENT_OBJ)
+    {
         close(client->connection.socket);
+        printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
+        client_is_active[client->id] = 0;
+        clients_count--;
+        client->isUp = 0;
+        close(client->connection.socket);
+
+    }
     else
+    {
         close(driver->connection->socket);
+        printf("CONNECTION WITH DRIVER_%d is CLOSED", driver->id);
+        driver_is_active[driver->id] = 0;
+        drivers_count--;
+        driver->isUp = 0;
+        close(driver->connection->socket);
+    }
 
 }
