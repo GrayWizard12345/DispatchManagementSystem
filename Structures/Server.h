@@ -49,7 +49,9 @@ struct Server {
     }
 
     server->connection = malloc(sizeof(struct Connection));
-    return *server;
+    Server server1 = *server;
+    free(server);
+    return server1;
 };
 
 
@@ -66,9 +68,9 @@ struct Session_params{
 char* initialPackageToSend = "Hello form server!\n";
 char* initialPackageToReceive;
 char* serverShutdownMessage = "SERVER IS GOING DOWN!";
-int client_is_active[2][MAX_CLIENTS] = {};
+int client_is_active[MAX_CLIENTS] = {};
 int clients_count = 0;
-int driver_is_active[2][MAX_DRIVERS] = {};
+int driver_is_active[MAX_DRIVERS] = {};
 int drivers_count = 0;
 
 
@@ -103,14 +105,14 @@ void driverConnectionThread(void*);
 
 
 void acceptConnections(Server server) {
-    while (clients_count <= MAX_DRIVERS + MAX_CLIENTS)
+    while (clients_count <= MAX_DRIVERS + MAX_CLIENTS)  //Almost equivalent to while (true)
     {
         int i = 0;
         int j = 0;
         int sock;
         //this loop finds a not vacant place in activity array
-        while (client_is_active[0][i++] != 0);
-        while (driver_is_active[0][j++] != 0);
+        while (client_is_active[i++] != 0);
+        while (driver_is_active[j++] != 0);
 
 
         //Wait for a connection and accept it
@@ -140,11 +142,12 @@ void acceptConnections(Server server) {
 
         if(initBuff == "hello")
         {
-            client_is_active[0][i] = 1;
-            //TODO initialize client id, get it from JSON object
-            client_is_active[1][i] = (*server.clients[i]).id;
-            (*server.clients[i]).isUp = 1;
-            (*server.clients[i]).connection.socket = sock;
+            client_is_active[i] = 1;
+
+            //client_is_active[1][i] = (*server.clients[i]).id;
+            server.clients[i]->isUp = 1;
+            server.clients[i]->id = i;
+            server.clients[i]->connection.socket = sock;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             //Code can be optimized, as the same function is called in else branch
@@ -164,12 +167,12 @@ void acceptConnections(Server server) {
         }
         else
         {
-            driver_is_active[0][j] = 1;
-            //TODO initialize client id, get it from JSON object
-            driver_is_active[1][j] = (*server.drivers[j]).id;
+            driver_is_active[j] = 1;
+            //driver_is_active[j] = (*server.drivers[j]).id;
             (*server.drivers[i]).isUp = 1;
             (*server.drivers[j]).connection.socket = sock;
-            printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
+            server.drivers[j]->id = j;
+            printf("SERVER ACCEPTED NEW CONNECTION FROM A DRIVER ON PORT %d .....\n", DEFAULT_PORT);
 
             memset(initBuff, 0, MAX_BUFFER);
             //Sending notification that message is accepted.
@@ -209,9 +212,17 @@ void* startSession(void* params) {
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
-                read(client->connection.socket, buffer, MAX_BUFFER);
+                int read_status;
+                if((read_status = read(client->connection.socket, buffer, MAX_BUFFER)) < 0)
+                {
+                    char* error = malloc(MAX_BUFFER);
+                    sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
+                    perror(error);
+                    free(client);
+                } else if(read_status == 0)
+                    continue;
 
-                printf("Dlient: %s" , buffer);
+                printf("Client_%d: %s" ,client->id,buffer);
                 //TODO parse obtained JSON
                 message_t = rand(); //get message type form JSON
 
@@ -240,11 +251,18 @@ void* startSession(void* params) {
             {
                 memset(buffer, 0 , MAX_BUFFER);
 
-                read(driver->connection.socket, buffer, MAX_BUFFER);
+                int read_status;
+                if(( read_status = read(driver->connection.socket, buffer, MAX_BUFFER)) < 0);
 
+                {
+                    char* error = malloc(MAX_BUFFER);
+                    sprintf(error, "CONNECTION WITH DRIVER_%d IS LOST\n", driver->id);
+                    perror(error);
+                    free(client);
+                }
                 //TODO parse obtained JSON
                 message_t = rand(); //get message type form JSON
-                printf("Dlient_sent: %s" , buffer);
+                printf("Driver_%d: %s" ,driver->id,buffer);
 
                 send(driver->connection.socket,buffer, MAX_BUFFER, 0);
 
@@ -261,9 +279,16 @@ void* startSession(void* params) {
                 }
 
             }
-            break; //End of case 1
+           break; //End of case 1
 
         default:
+            perror("UNKNOWN OBJ_TYPE");
+            exit(EXIT_FAILURE);
             break;
     }
+    if(obj_type == CLIENT_OBJ)
+        close(client->connection.socket);
+    else
+        client(driver->connection.socket);
+
 }

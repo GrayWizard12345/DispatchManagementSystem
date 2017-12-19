@@ -1,7 +1,6 @@
 //
 // Created by hamlet on 12/13/17.
 //
-#pragma once
 
 #include <stdlib.h>
 #include <stdio.h>
@@ -9,6 +8,7 @@
 
 
 struct Server server;
+
 
 
 // Main thread
@@ -61,7 +61,7 @@ int main(int argc, char** argv)
     }
 
 
-    printf("Hello World\n");
+    printf("Server is UP :)\n");
 
 
     // Accept connections
@@ -71,7 +71,9 @@ int main(int argc, char** argv)
 
 
 
-
+    close(server.connection->socket);
+    //Server is going down
+    printf("Server is going DOWN :(\n");
 
     return 0;
 }
