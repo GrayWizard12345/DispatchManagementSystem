@@ -7,7 +7,7 @@
 #include "../Structures/Connection.h"
 #include "Order.h"
 #include <stdbool.h>
-#defile nullptr NULL
+#define nullptr NULL
 
 void client_orderTaxi(void* client, Order order);
 void client_cancelOrder(void* client, Order order);
