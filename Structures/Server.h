@@ -136,11 +136,11 @@ void acceptConnections(Server server) {
 
         //TODO parse initBuff from JSON to obj or string
 
-        pthread_t thread_id;
+        pthread_t threads[MAX_DRIVERS + MAX_CLIENTS];
 
         printf("%s",initBuff);
 
-        if(initBuff == "hello")
+        if(initBuff == "0")
         {
             client_is_active[i] = 1;
 
@@ -163,14 +163,14 @@ void acceptConnections(Server server) {
             session_params->obj_type = 0;
 
             //Creation of the thread in which connection is maintained.
-            pthread_create(&thread_id, NULL, startSession, session_params);
+            pthread_create(&threads[i], NULL, startSession, session_params);
         }
-        else
+        else if(initBuff == "1")
         {
             driver_is_active[j] = 1;
             //driver_is_active[j] = (*server.drivers[j]).id;
-            (*server.drivers[i]).isUp = 1;
-            (*server.drivers[j]).connection.socket = sock;
+            server.drivers[i]->isUp = 1;
+            server.drivers[j]->connection->socket = sock;
             server.drivers[j]->id = j;
             printf("SERVER ACCEPTED NEW CONNECTION FROM A DRIVER ON PORT %d .....\n", DEFAULT_PORT);
 
@@ -183,9 +183,11 @@ void acceptConnections(Server server) {
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
             session_params->obj = server.drivers[j];
             session_params->obj_type = 1;
+            pthread_create(&threads[j], NULL, startSession, session_params);
 
-            pthread_create(&thread_id, NULL, startSession, session_params);
-
+        } else if(initBuff == "2")
+        {
+            //Admin connected here
         }
 
     }
@@ -252,7 +254,7 @@ void* startSession(void* params) {
                 memset(buffer, 0 , MAX_BUFFER);
 
                 int read_status;
-                if(( read_status = read(driver->connection.socket, buffer, MAX_BUFFER)) < 0);
+                if(( read_status = read(driver->connection->socket, buffer, MAX_BUFFER)) < 0);
 
                 {
                     char* error = malloc(MAX_BUFFER);
@@ -264,7 +266,7 @@ void* startSession(void* params) {
                 message_t = rand(); //get message type form JSON
                 printf("Driver_%d: %s" ,driver->id,buffer);
 
-                send(driver->connection.socket,buffer, MAX_BUFFER, 0);
+                send(driver->connection->socket,buffer, MAX_BUFFER, 0);
 
                 switch (message_t)
                 {
@@ -289,6 +291,6 @@ void* startSession(void* params) {
     if(obj_type == CLIENT_OBJ)
         close(client->connection.socket);
     else
-        client(driver->connection.socket);
+        close(driver->connection->socket);
 
 }

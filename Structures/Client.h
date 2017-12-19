@@ -68,7 +68,8 @@ void client_setOrder(void* client, Order order) {
     //c->order = order;
 }
 
-/*void client_orderTaxi(void* client) {
+//There were a problem conflicting types due to mismatch in function parameters
+void client_orderTaxi(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
         /*
@@ -76,10 +77,11 @@ void client_setOrder(void* client, Order order) {
          * Order a taxi.
          * Register order in a server
         */
-/*}
-}*/
+}
+}
 
-/*void client_cancelOrder(void* client) {
+//There were a problem conflicting types due to mismatch in function parameters
+void client_cancelOrder(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
         /*
@@ -92,8 +94,8 @@ void client_setOrder(void* client, Order order) {
  * Order does not exist.
  * Notify user
  */
-/*}
-}*/
+}
+}
 
 bool client_orderExists(void* client) {
     Client* c = client;
