@@ -90,8 +90,8 @@ char* json_getJsonFromClient(Client client) {
 char* json_getJsonFromAuthData(int id, char* password) {
     cJSON* root;
     root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "id", location.longitude);
-    cJSON_AddStringToObject(root, "password", client.name);
+    cJSON_AddNumberToObject(root, "id", id);
+    cJSON_AddStringToObject(root, "password", password);
 
     return cJSON_Print(root);
 }
