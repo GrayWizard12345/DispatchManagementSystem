@@ -142,10 +142,10 @@ void acceptConnections(Server server) {
 
         //Get the type of the connected guy
         //char* type = json_getTypeFromJson(initBuff);
-        char type = initBuff[0] - 48;
-        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %s",initBuff, i, j, CLIENT, type);
+        int type = json_getTypeFromJson(initBuff);
+        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %s\n",initBuff, i, j, CLIENT, type);
 
-        if(initBuff[0] - 48 == CLIENT)
+        if(type == CLIENT)
         {
             pthread_mutex_lock(&mutex);
             client_is_active[i] = 1;
@@ -179,7 +179,7 @@ void acceptConnections(Server server) {
             //Creation of the thread in which connection is maintained.
             pthread_create(&client_threads[i], NULL, startSession, session_params);
         }
-        else if(initBuff[0]-48 == DRIVER)
+        else if(type == DRIVER)
         {
             pthread_mutex_lock(&mutex);
             driver_is_active[j] = 1;
@@ -206,7 +206,7 @@ void acceptConnections(Server server) {
 
             pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
-        } else if(initBuff[0] == SERVER)
+        } else if(type == SERVER)
         {
             //Admin connected here
         } else
@@ -250,7 +250,7 @@ void* startSession(void* params) {
 
                 printf("Client_%d: %s" ,client->id,buffer);
                 //Getting message type here, proper cast may be required later
-                message_t = json_getTypeFromJson(buffer) - 48; //get message type form JSON
+                message_t = json_getMessageType(buffer); //get message type form JSON
 
                 //send(client->connection.socket,buffer, strlen(buffer), 0);
                 printf("MESSAGE TYPE: %d", message_t);
@@ -258,6 +258,7 @@ void* startSession(void* params) {
                 switch (message_t)
                 {
                     case 1:
+                        //int id = json_get
                         break;
 
                     case 2:
@@ -291,8 +292,10 @@ void* startSession(void* params) {
                 {
                     break;
                 }
-                //TODO parse obtained JSON
-                message_t = rand(); //get message type form JSON
+
+                //Getting message type from Json
+                message_t = json_getMessageType(buffer); //get message type form JSON
+
                 printf("Driver_%d: %s" ,driver->id,buffer);
 
                 send(driver->connection->socket,buffer, MAX_BUFFER, 0);
@@ -300,6 +303,7 @@ void* startSession(void* params) {
                 switch (message_t)
                 {
                     case 1:
+
                         break;
 
                     case 2:

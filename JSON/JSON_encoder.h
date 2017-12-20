@@ -37,9 +37,9 @@ char* json_getJsonStringForFirstMessage(USER_TYPE user_type) {
 // Type
 // Send by all objects connecting to the server, to tell the server their type
 //TODO should be int, not string
-USER_TYPE json_getTypeFromJson(char* json_string) {
+USER_TYPE json_getUserTypeFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
-    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "type");
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "user_type");
 
     USER_TYPE user_type = type_item->valueint;
 
@@ -145,4 +145,22 @@ char* json_getStateChangeMess(STATE state){
     cJSON_AddNumberToObject(root, "state", state);
 
     return cJSON_Print(root);
+}
+
+char* json_getIdFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "id");
+
+    char* id = type_item->valuestring;
+
+    return id;
+}
+
+char* json_getPasswordFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "password");
+
+    char* id = type_item->valuestring;
+
+    return id;
 }
