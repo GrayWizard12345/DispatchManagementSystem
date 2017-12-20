@@ -14,6 +14,7 @@
 #include "Vehicle.h"
 #include "Order.h"
 #include "../JSON/JSON_encoder.h"
+#include "../JSON/JSON_parser.h"
 #include "../global_var/global_var.h"
 #include "../global_var/enums.h"
 
@@ -23,6 +24,7 @@ int getID();
 void getPassword(char *password);
 void sendAuthMessage(Driver*);
 void receiveAuthMessage(Driver*);
+void setVehicle(Driver*, Vehicle);
 
 struct Driver {
     Connection *connection;
@@ -61,9 +63,6 @@ void freeDriver(Driver *driver) {
 void authDriver(Driver *driver) {
     driver->id = getID();
     getPassword(driver->password);
-    puts("Driver password ");
-    puts(driver->password);
-    puts("*");
 
     sendAuthMessage(driver);
     receiveAuthMessage(driver);
@@ -82,11 +81,22 @@ void receiveAuthMessage(Driver* driver){
     char authMessage[MAX_MESSAGE_SIZE];
     memset(authMessage, 0, sizeof(authMessage));
     read(driver->connection->socket, authMessage, sizeof(authMessage));
-    //TODO remove the message display
-    printf("received: %s", authMessage);
     Vehicle vehicle = json_getVehicleFromJson(authMessage);
-    //parse and get other fields of Driver
-    //if wrong exit(0);
+    setVehicle(driver, vehicle);
+    printf("\nRECEIVED DATA SUCCESSFULLY\n");
+    printf("\tYour vehicle date\n");
+    printVehicle(vehicle);
+}
+
+void setOrderAndChangeState(Order order, Driver *driver){
+    driver->currentOrder = order;
+    driver->state = DRIVE_TO_SOURCE;
+}
+
+void removeOrderAndChangeState(Driver *driver){
+    driver->currentOrder.userId = -1;
+    free(driver->currentOrder.clientName);
+    driver->state = FREE;
 }
 
 int getID() {
@@ -103,14 +113,6 @@ void getPassword(char *password) {
     password[strcspn(password, "\n")] = 0;
 }
 
-void setOrderAndChangeState(Order order, Driver *driver){
-    driver->currentOrder = order;
-    driver->state = DRIVE_TO_SOURCE;
+void setVehicle(Driver* driver, Vehicle vehicle){
+    driver->vehicle = vehicle;
 }
-
-void removeOrderAndChangeState(Driver *driver){
-    driver->currentOrder.userId = -1;
-    free(driver->currentOrder.clientName);
-    driver->state = FREE;
-}
-

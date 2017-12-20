@@ -43,7 +43,7 @@ int main() {
     startThreadForNotification();
 
     while (driver->isUp == 1){
-
+        
     }
 
     freeDriver(driver);
@@ -86,5 +86,5 @@ void startThreadForNotification(){
     pthread_t tid;
     printf("Before Thread\n");
     pthread_create(&tid, NULL, notify, NULL);
-    //pthread_join(tid, NULL);
+    pthread_join(tid, NULL);
 }

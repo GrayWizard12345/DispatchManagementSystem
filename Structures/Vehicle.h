@@ -7,10 +7,11 @@
 #include "../global_var/global_var.h"
 
 typedef struct Vehicle Vehicle;
+
 struct Vehicle {
     char number[8];
-    char model[INPUT_STRING_LENGTH];
-    char color[INPUT_STRING_LENGTH];
+    char model[MAX_BUFFER];
+    char color[MAX_BUFFER];
 } initVehicle() {
     printf("Vehicle constructor called!\n");
 
@@ -22,3 +23,9 @@ struct Vehicle {
     free(vehicle);
     return vehicle1;
 };
+
+void printVehicle(Vehicle vehicle){
+    printf("Vehicle number: %s\n", vehicle.number);
+    printf("Vehicle model: %s\n", vehicle.model);
+    printf("Vehicle color: %s\n", vehicle.color);
+}
