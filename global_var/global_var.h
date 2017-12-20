@@ -2,7 +2,7 @@
 // Created by madina on 19/12/17.
 //
 
-#define SERVER_IP "93.170.208.203"
+#define SERVER_IP "127.0.0.1"
 #define DEFAULT_PORT 8080
 #define PORT 8080
 

@@ -50,7 +50,6 @@ Driver* initDriver(Connection *conn) {
     char *firstMessage;
     memset(&firstMessage, 0, sizeof(firstMessage));
     firstMessage = json_getJsonStringForFirstMessage(DRIVER);
-    puts(firstMessage);
     send(driver->connection->socket, firstMessage, strlen(firstMessage), 0);
     free(firstMessage);
 
