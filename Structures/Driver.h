@@ -22,7 +22,7 @@ typedef struct Driver Driver;
 
 int getID();
 void getPassword(char *password);
-void sendAuthMessage(Driver*);
+int sendAuthMessage(Driver*);
 void receiveAuthMessage(Driver*);
 void setVehicle(Driver*, Vehicle);
 
@@ -69,19 +69,29 @@ void freeDriver(Driver *driver) {
 }
 
 void authDriver(Driver *driver) {
-    driver->id = getID();
-    getPassword(driver->password);
+    int messageType = ACCESS_DENIED;
+    while (messageType == ACCESS_DENIED){
+        driver->id = getID();
+        getPassword(driver->password);
 
-    sendAuthMessage(driver);
+        messageType = sendAuthMessage(driver);
+        if(messageType == ACCESS_DENIED){
+            printf("Try again, incorrect ID or password");
+        }
+    }
     receiveAuthMessage(driver);
 }
 
-void sendAuthMessage(Driver* driver){
+int sendAuthMessage(Driver* driver){
     char *authMessage;
     memset(&authMessage, 0, sizeof(authMessage));
     authMessage = json_getJsonStringFromLoginData(driver->id, driver->password);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
+    memset(&authMessage, 0, sizeof(authMessage));
+    read(driver->connection->socket, authMessage, sizeof(authMessage));
+    int messageType = json_getMessageType(authMessage);
     free(authMessage);
+    return messageType;
 }
 
 void receiveAuthMessage(Driver* driver){
