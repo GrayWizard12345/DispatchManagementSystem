@@ -42,7 +42,7 @@ struct Server {
 
     //read drivers from db
     DriverArray driverArray = getAllDrivers();
-    server->drivers_count = driverArray.used;
+    server->drivers_count = (int) driverArray.used;
     for (int i = 0; i < driverArray.used; ++i) {
         server->existingDrivers[i] = driverArray.array;
         printf("%d.Driver id: %d\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);

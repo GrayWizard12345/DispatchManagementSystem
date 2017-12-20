@@ -15,7 +15,7 @@
 #include <unistd.h>
 #include "../src/sysadmin/Sysadmin.h"
 #include "../global_var/global_var.h"
-#include "../Structures/DriverArray.h"
+#include "../Structures/Structures.h"
 
 /*Pre-declaration of functions used in this file*/
 void addNewDriverView();

@@ -4,17 +4,10 @@
 
 #include <stdio.h>
 #include <sys/socket.h>
-#include <sys/types.h>
-#include <sys/stat.h>
-#include <fcntl.h>
 #include <unistd.h>
 #include <stdlib.h>
-#include <netinet/in.h>
 #include <string.h>
-#include <arpa/inet.h>
 #include <pthread.h>
-#include <time.h>
-#include <stdlib.h>
 
 #include "../../Structures/Connection.h"
 #include "../../Structures/Driver.h"
@@ -27,7 +20,6 @@ pthread_t locationThreadID;
 
 void startThreadForNotification();
 void startThreadForLocationUpdate();
-void printMessage(char*);
 void notify(void*);
 void sendLocation(void*);
 
@@ -67,12 +59,12 @@ int main() {
 }
 
 void startThreadForNotification(){
-    pthread_create(&notifThreadID, NULL, notify, NULL);
+    pthread_create(&notifThreadID, NULL, (void *(*)(void *)) notify, NULL);
 }
 
 void startThreadForLocationUpdate(){
-    srand(time(NULL));
-    pthread_create(&locationThreadID, NULL, sendLocation, NULL);
+    srand((unsigned int) time(NULL));
+    pthread_create(&locationThreadID, NULL, (void *(*)(void *)) sendLocation, NULL);
 }
 
 void notify(void *vargp){
@@ -85,7 +77,7 @@ void notify(void *vargp){
         read(driver->connection->socket, recMessage, sizeof(recMessage));
         fflush(stdout);
 
-        message_type = json_getMessageType(recMessage);
+        message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
         if(message_type == ORDER_GET){
             Order order = json_getOrderFromJson(recMessage);
             setOrderAndChangeState(order, driver);

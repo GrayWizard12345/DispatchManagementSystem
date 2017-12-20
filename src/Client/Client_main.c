@@ -3,15 +3,7 @@
 //
 
 #include <stdio.h>
-#include <unistd.h>
-#include <stdlib.h>
-#include <string.h>
-#include "../../Structures/Connection.h"
-#include "../../Structures/Client.h"
-#include "../../View/ClientView.h"
-#include "../../global_var/global_var.h"
 #include "../../JSON/JSON_parser.h"
-#include "../../JSON/JSON_encoder.h"
 
 Client client;
 

@@ -7,8 +7,6 @@
 
 #include <stdio.h>
 #include <stdlib.h>
-#include "../../Structures/Driver.h"
-#include "../../Structures/Vehicle.h"
 #include "../../Structures/DriverArray.h"
 
 const char *dbPath = "../src/sysadmin/database.db";
@@ -97,7 +95,7 @@ DriverArray getAllDrivers()
         return driverArray;
     }
     int position = 0;
-    while ((read = getline(&line, &len, dbFileRead)) != -1) {
+    while (-1 != (read = getline(&line, &len, dbFileRead))) {
         int foundID;
         char password[INPUT_STRING_LENGTH];
         char number[8]; //TODO: size of the variable is not defined in the global

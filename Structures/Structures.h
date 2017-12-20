@@ -3,6 +3,7 @@
 //
 #pragma once
 
+#include "DriverArray.h"
 #include "Client.h"
 #include "Connection.h"
 #include "Driver.h"
