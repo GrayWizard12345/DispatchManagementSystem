@@ -47,7 +47,7 @@ int main() {
 
     int choice;
     while (driver->isUp == 1){
-        /*printWaitingMessage();
+        printWaitingMessage();
         //wait until the driver gets order
         while (hasOder(driver) == -1);
         choice = getInputOnArrival(driver);
@@ -58,7 +58,7 @@ int main() {
         getInputOnPickedUp();
         notifyOnPickUpAndChangeState(driver);
         getInputOnArrivalDestination();
-        notifyOnArrivalDestination(driver);*/
+        notifyOnArrivalDestination(driver);
     }
 
     freeDriver(driver);
