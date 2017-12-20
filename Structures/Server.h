@@ -148,7 +148,7 @@ void acceptConnections(Server server) {
 
         //Get the type of the connected guy
         //char* type = json_getTypeFromJson(initBuff);
-        int type = json_getUserTypeFromJson(initBuff);
+        int type = json_getTypeFromJson(initBuff);
         printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %d\n",initBuff, i, j, CLIENT, type);
 
         if(type == CLIENT)

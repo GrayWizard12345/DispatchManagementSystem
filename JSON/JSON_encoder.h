@@ -144,3 +144,23 @@ char* json_getStateChangeMess(STATE state){
 
     return cJSON_Print(root);
 }
+
+
+int json_getIdFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "id");
+
+    int id = type_item->valueint;
+
+    return id;
+}
+
+char *json_getPasswordFromJson(char* json_string)
+{
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "password");
+
+    char* passwd = type_item->valuestring;
+
+    return passwd;
+}
