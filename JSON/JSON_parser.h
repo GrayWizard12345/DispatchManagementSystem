@@ -10,6 +10,7 @@
 #include "../Structures/Location.h"
 #include "../Structures/Order.h"
 #include "../Structures/Driver.h"
+#include "../Structures/Vehicle.h"
 
 // Location
 Location json_getLocationFromJson(char* json_string) {
