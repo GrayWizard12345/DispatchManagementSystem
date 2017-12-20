@@ -27,7 +27,7 @@ int openDB()
     }
 }
 
-int addNewDriver(int id, char *password)
+int addNewDriver(int id, char *password, Vehicle vehicle)
 {
     int position = checkDriver(id);
     openDB();
@@ -98,12 +98,34 @@ DriverArray getAllDrivers()
     int position = 0;
     while ((read = getline(&line, &len, dbFileRead)) != -1) {
         int foundID;
-        char *string;
-        sscanf(line, "#%d %s", &foundID, string);
+        char password[INPUT_STRING_LENGTH];
+        char number[8]; //TODO: size of the variable is not defined in the global
+        char model[MAX_BUFFER];
+        char color[MAX_BUFFER];
+        // getting driver data from the current line
+        // order matters
+        sscanf(line, "#%d %[^' '|\t]s %[^' '|\t]s %[^' '|\t]s %[^' '|\t]s", &foundID, password, number, model, color);
+
+        //nothing scary, just replacing \n character if there is any
+        if (password[strlen(password)-1] == '\n')
+            password[strlen(password)-1] = '\0';
+        if (number[strlen(number)-1] == '\n')
+            number[strlen(number)-1] = '\0';
+        if (model[strlen(model)-1] == '\n')
+            model[strlen(model)-1] = '\0';
+        if (color[strlen(color)-1] == '\n')
+            color[strlen(color)-1] = '\0';
+
+        Vehicle vehicle;
+        strcpy(vehicle.number, number);
+        strcpy(vehicle.model, model);
+        strcpy(vehicle.color, color);
+
 
         Driver driver;
+        driver.vehicle = vehicle;
         driver.id = foundID;
-        strcpy(driver.password, string);
+        strcpy(driver.password, password);
 
         insertDriverArray(&driverArray, driver);
 

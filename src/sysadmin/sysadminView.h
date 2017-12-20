@@ -70,14 +70,27 @@ void addNewDriverView()
     /*Reading password*/
     char *password;
     char password2[INPUT_STRING_LENGTH] = {'\0'};
+    Vehicle vehicle;
+
+    char number[8]; //TODO: size of the variable is not defined in the global
+    char model[MAX_BUFFER];
+    char color[MAX_BUFFER];
 
     password = getpass("  *Please enter the new password: ");
     strcpy(password2, password);
     password = getpass("  *Please confirm the new password: ");
 
+    printf("   Please enter the new Driver's vehicle number:\n");
+    getline(number, (sizeof(char)*8), stdin);
+    printf("   Please enter the new Driver's vehicle model:\n");
+    getline(model, (sizeof(char)*MAX_BUFFER), stdin);
+    printf("   Please enter the new Driver's vehicle color:\n");
+    getline(color, (sizeof(char)*MAX_BUFFER), stdin);
+
+
     if (strcmp(password, password2) == 0)
     {
-        if(addNewDriver(id, password) == 0)
+        if(addNewDriver(id, password, vehicle) == 0)
         {
             return addNewDriverView();
         }
@@ -104,8 +117,9 @@ void allDriversView()
     printf("-    Drivers registered in the DMSystem       -\n");
     DriverArray driverArray = getAllDrivers();
     for (int i = 0; i < driverArray.used; ++i) {
-        printf("%d. %d\n", i, driverArray.array[i].id);
+        printf("%d.Driver id: %d\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
     }
+    printf("-----------------------------------------------\n");
 }
 
 

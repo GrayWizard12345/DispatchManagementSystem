@@ -3,5 +3,9 @@
 
 int main() {
     sysadminView();
+
+//    getAllDrivers();
+
+
     return 0;
 }
