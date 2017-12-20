@@ -241,6 +241,7 @@ void* startSession(void* params) {
     //Getting parameters... Hope this gonna work...
     struct Session_params* session_params = params;
     int obj_type = session_params->obj_type;
+    Server *server = session_params->server;
 
     int message_t;
     char buffer[MAX_BUFFER];
@@ -319,27 +320,52 @@ void* startSession(void* params) {
                 switch (message_t)
                 {
                     case LOG_IN:
+
+                        //Get driver credintails from JSON
                         driver->id = json_getIdFromJson(buffer);
                         strcpy(driver->password, json_getPasswordFromJson(buffer));
 
-
+                        //Check if this driver exists in db
+                        int accessGranted = 1;
                         for (int i = 0; i < MAX_DRIVERS; ++i) {
-                            if ()
+                            if (server->existingDrivers[i]->id != driver->id ||
+                                    strcmp(server->existingDrivers[i]->password,driver->password) != 0)
+                            {
+                                accessGranted = 0;
+                                char* access_denied_json = json_getJsonStringForSimpleMessage(SERVER, ACCESS_SUCCESSFUL);
+                                if (send(driver->connection->socket, access_denied_json, sizeof(access_denied_json), 0) < 0)
+                                {
+                                    perror("FAILED TO SEND DATA");
+                                    break;
+                                }
+                                break;
+                            }
                         }
 
-
-                        Vehicle vehicle = initVehicle();
-                        strcpy(vehicle.color, "RED");
-                        strcpy(vehicle.model, "VOLGA");
-                        strcpy(vehicle.number, "01AA777C");
-
-                        memset(jsonString, 0, MAX_BUFFER);
-                        jsonString = json_getJsonStringFromVehicle(vehicle);
-
-                        if (send(driver->connection->socket, jsonString, MAX_BUFFER, 0) < 0)
+                        if (accessGranted == 1)
                         {
-                            perror("FAILED TO SEND DATA");
-                            break;
+                            char* access_successful_json = json_getJsonStringForSimpleMessage(SERVER, ACCESS_SUCCESSFUL);
+                            if (send(driver->connection->socket, access_successful_json, sizeof(access_successful_json), 0) < 0)
+                            {
+                                perror("FAILED TO SEND DATA");
+                                break;
+                            }
+
+
+                            //send driver car if driver exists in db
+                            Vehicle vehicle = initVehicle();
+                            strcpy(vehicle.color, "RED");
+                            strcpy(vehicle.model, "VOLGA");
+                            strcpy(vehicle.number, "01AA777C");
+
+                            memset(jsonString, 0, MAX_BUFFER);
+                            jsonString = json_getJsonStringFromVehicle(vehicle);
+
+                            if (send(driver->connection->socket, jsonString, MAX_BUFFER, 0) < 0)
+                            {
+                                perror("FAILED TO SEND DATA");
+                                break;
+                            }
                         }
 
                         break;
