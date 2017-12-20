@@ -332,7 +332,7 @@ void* startSession(void* params) {
                                     strcmp(server->existingDrivers[i]->password,driver->password) != 0)
                             {
                                 accessGranted = 0;
-                                char* access_denied_json = json_getJsonStringForSimpleMessage(SERVER, ACCESS_SUCCESSFUL);
+                                char* access_denied_json = json_getJsonStringForSimpleMessage(SERVER, AUTH_SUCCESSFUL);
                                 if (send(driver->connection->socket, access_denied_json, sizeof(access_denied_json), 0) < 0)
                                 {
                                     perror("FAILED TO SEND DATA");
@@ -344,7 +344,7 @@ void* startSession(void* params) {
 
                         if (accessGranted == 1)
                         {
-                            char* access_successful_json = json_getJsonStringForSimpleMessage(SERVER, ACCESS_SUCCESSFUL);
+                            char* access_successful_json = json_getJsonStringForSimpleMessage(SERVER, AUTH_SUCCESSFUL);
                             if (send(driver->connection->socket, access_successful_json, sizeof(access_successful_json), 0) < 0)
                             {
                                 perror("FAILED TO SEND DATA");
