@@ -10,6 +10,8 @@
 #include "../../Structures/Client.h"
 #include "../../View/ClientView.h"
 #include "../../global_var/global_var.h"
+#include "../../JSON/JSON_parser.h"
+#include "../../JSON/JSON_encoder.h"
 
 Client client;
 
@@ -25,6 +27,8 @@ int main() {
     }
     client = clientInit();
     client.setConnection(&client, c);
+
+//    char *json =
 
     // Connection successfull!
 

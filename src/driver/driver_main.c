@@ -17,6 +17,9 @@
 #include "../../Structures/Driver.h"
 #include "../../View/DriverView.h"
 #include "../../global_var/global_var.h"
+#include "../../JSON/JSON_parser.h"
+#include "../../JSON/JSON_encoder.h"
+
 
 #include "../../utilities/string_splitting.h"
 
