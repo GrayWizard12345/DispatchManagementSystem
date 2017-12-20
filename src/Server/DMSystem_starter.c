@@ -16,6 +16,7 @@ void sig_int_handler(int sig)
     if(sig == SIGINT)
     {
 
+        //We also need to write drivers to files, or maybe its sysadmins business
         printf("SIGINT handled! SOCKET IS CLOSED NOW");
 
         if(close(server.connection->socket) < 0)

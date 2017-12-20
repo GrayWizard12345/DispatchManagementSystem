@@ -26,6 +26,7 @@ struct Server {
     //Two arrays of pointers
     struct Driver *drivers[MAX_DRIVERS];
     struct Client *clients[MAX_CLIENTS];
+    struct Driver *existingDrivers[MAX_DRIVERS];    //drivers to be read from db
     //Socket options
     int opt;
 
@@ -35,6 +36,8 @@ struct Server {
     printf("Server constructor called!\n");
 
     struct Server* server = malloc(sizeof(struct Server));
+
+    //read drivers from db
 
     //Initializing the arrays
     for (int i = 0; i < MAX_CLIENTS; ++i) {
@@ -59,6 +62,7 @@ struct Server {
 struct Session_params{
 
     void* obj;
+    void* server;
     int obj_type;
 
 };
@@ -174,6 +178,8 @@ void acceptConnections(Server server) {
 
             pthread_mutex_lock(&mutex);
             session_params->obj = server.clients[i];
+            session_params->server = &server;
+            session_params->obj_type = CLIENT;
             pthread_mutex_unlock(&mutex);
 
             session_params->obj_type = CLIENT;
@@ -204,13 +210,23 @@ void acceptConnections(Server server) {
             pthread_mutex_lock(&mutex);
             session_params->obj = server.drivers[j];
             session_params->obj_type = DRIVER;
+            session_params->server = &server;
             pthread_mutex_unlock(&mutex);
 
             pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
-        } else if(type == SERVER)
+        } else if(type == SYSADMIN)
         {
             //Admin connected here
+            struct Session_params* session_params = malloc(sizeof(struct Session_params));
+
+            pthread_mutex_lock(&mutex);
+            session_params->obj_type = SYSADMIN;
+            session_params->server = &server;
+            pthread_mutex_unlock(&mutex);
+            pthread_t pid;
+            pthread_create(&pid, NULL, startSession, session_params);
+
         } else
         {
             printf("WRONG INITIAL BYTE SENT!\n");
@@ -307,7 +323,9 @@ void* startSession(void* params) {
                         strcpy(driver->password, json_getPasswordFromJson(buffer));
 
 
-                        //if(driver is in my list of drivers)
+                        for (int i = 0; i < MAX_DRIVERS; ++i) {
+                            if ()
+                        }
 
 
                         Vehicle vehicle = initVehicle();
