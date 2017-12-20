@@ -16,6 +16,7 @@
 #include <stdio.h>
 #include "Structures.h"
 #include "../global_var/enums.h"
+#include "../JSON/JSON_encoder.h"
 
 typedef struct Server Server;
 struct Server {
@@ -61,9 +62,6 @@ struct Session_params{
 };
 
 
-char* initialPackageToSend = "Hello form server!\n";
-char* initialPackageToReceive;
-char* serverShutdownMessage = "SERVER IS GOING DOWN!";
 int client_is_active[MAX_CLIENTS] = {};
 int clients_count = 0;
 int driver_is_active[MAX_DRIVERS] = {};
@@ -143,11 +141,11 @@ void acceptConnections(Server server) {
         }
 
         //Get the type of the connected guy
-        char* type = json_getTypeFromJson(initBuff);
-
+        //char* type = json_getTypeFromJson(initBuff);
+        char type = initBuff[0] - 48;
         printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %s",initBuff, i, j, CLIENT, type);
 
-        if(type == CLIENT)
+        if(initBuff[0] - 48 == CLIENT)
         {
             pthread_mutex_lock(&mutex);
             client_is_active[i] = 1;
@@ -181,7 +179,7 @@ void acceptConnections(Server server) {
             //Creation of the thread in which connection is maintained.
             pthread_create(&client_threads[i], NULL, startSession, session_params);
         }
-        else if(type == DRIVER)
+        else if(initBuff[0]-48 == DRIVER)
         {
             pthread_mutex_lock(&mutex);
             driver_is_active[j] = 1;
@@ -208,7 +206,7 @@ void acceptConnections(Server server) {
 
             pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
-        } else if(type == SERVER)
+        } else if(initBuff[0] == SERVER)
         {
             //Admin connected here
         } else

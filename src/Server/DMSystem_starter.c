@@ -17,11 +17,13 @@ void sig_int_handler(int sig)
     {
 
         printf("SIGINT handled! SOCKET IS CLOSED NOW");
-        free(server.connection);
+
         if(close(server.connection->socket) < 0)
         {
+            free(server.connection);
             exit(1);
         }
+        free(server.connection);
     }
 }
 
