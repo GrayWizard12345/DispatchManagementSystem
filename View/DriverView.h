@@ -4,23 +4,21 @@
 
 #pragma once
 #include <stdio.h>
+#include "../Structures/Driver.h"
 
-void driverLoginView () {
-    int id;
-    char* password;
-
-    printf("\t\tLogin");
-    printf("Enter your ID: ");
-    scanf("%d",&id);
-    printf("Enter your password");
-    scanf("%s", password);
+void printWaitingMessage() {
+    printf("\n\n\t\t Waiting for the order\n");
+    printf("-------------------------------\n");\
 }
 
-void driverMainMenuView (double latitude, double longitude) {
-    printf("\t\t Waiting for the order\n");
-    printf("-------------------------------\n");
-    printf("\n\n\tLocation: %lf,%lf", latitude, longitude);
-
+void printWelcomeMessage(){
+    printf("You have sucessfully logged in\n\n");
+    fflush(stdin);
+    sleep(1);
+    system("clear");
+    printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
+    printf("Operator will assign an order to you soon\n");
+    printWaitingMessage();
 }
 
 void driverHasOrderView (double latitude, double longitude) {
@@ -42,7 +40,7 @@ void driverWaitingClientView () {
     printf("Waiting for the client\n");
 }
 
-void driverDriveView (double latitude, double longitude) {
+/*void driverDriveView (double latitude, double longitude) {
     printf("Driving\n");
     printf("Destination: %lf, %lf\n", latitude,longitude);
     printf("------------------------------\n");
@@ -58,4 +56,4 @@ void driverDriveView (double latitude, double longitude) {
         default:
             break;
     }
-}
+}*/
