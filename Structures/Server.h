@@ -18,7 +18,7 @@
 #include "../global_var/enums.h"
 #include "../JSON/JSON_encoder.h"
 #include "../src/sysadmin/sysadmin.h"
-#include "../src/sysadmin/DriverArray.h"
+#include "../Structures/DriverArray.h"
 
 typedef struct Server Server;
 struct Server {

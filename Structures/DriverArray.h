@@ -7,7 +7,7 @@
 
 #include <glob.h>
 #include <stdlib.h>
-#include "../../Structures/Driver.h"
+#include "Driver.h"
 
 typedef struct {
     Driver *array;
