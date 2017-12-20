@@ -196,9 +196,11 @@ char* json_getJsonStringFromClient(Client client) {
 // AuthData
 char* json_getJsonStringFromAuthData(int id, char* password) {
     cJSON *root;
+    /*
     root = cJSON_CreateObject();
     cJSON_AddNumberToObject(root, "id", id);
     cJSON_AddStringToObject(root, "password", password);
 
     return cJSON_Print(root);
+     */
 }
