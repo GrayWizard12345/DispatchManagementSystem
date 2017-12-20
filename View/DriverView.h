@@ -9,7 +9,7 @@
 void printWaitingMessage() {
     printf("\n\tOperator will assign an order to you soon\n");
     printf("\n\tWaiting for the order\n");
-    printf("--------------------------------------------------------------\n");
+    printf("\n\n-------------------------------------------------------------\n");
 }
 
 void printWelcomeMessage(){
@@ -25,7 +25,7 @@ void printOrderReceivedMessage(Driver* driver) {
     printf("\t\t---------------YOU RECEIVED ORDER---------------\n");
     printf("\n\tORDER INFORMATION\n");
 
-    printf("\n\tLocation to pick up: Latitude %lf, Longitude %lflng\n",
+    printf("\n\tLocation to pick up: Latitude %lf, Longitude %lf\n",
            driver->currentOrder.source.latitude, driver->currentOrder.source.longitude);
     printf("\tLocation to drive: Latitude %lf, Longitude %lflng\n",
            driver->currentOrder.destination.latitude, driver->currentOrder.destination.longitude);
@@ -33,7 +33,7 @@ void printOrderReceivedMessage(Driver* driver) {
     //TODO can remove after the problem with JSON is fixed
     printf("\tUser ID: %d", driver->currentOrder.userId);
 
-    printf("\n\n----------------------------------------------------\n");
+    printf("\n\n-------------------------------------------------------------\n");
 }
 
 void printOrderCancelMessage() {

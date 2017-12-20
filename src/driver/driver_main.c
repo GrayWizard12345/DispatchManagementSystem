@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #include "../../Structures/Connection.h"
 #include "../../Structures/Driver.h"
@@ -27,6 +28,7 @@ char sendMessage[MAX_MESSAGE_SIZE];
 
 void startThreadForNotification();
 void printMessage(char*);
+void notify(void*);
 
 int main() {
     Connection c = connectToServer();
@@ -40,17 +42,16 @@ int main() {
 
     startThreadForNotification();
 
+    while (driver->isUp == 1){
+
+    }
 
     freeDriver(driver);
 
     return 0;
 }
 
-void printMessage(char* message){
-
-}
-
-void startThreadForNotification(){
+void notify(void *vargp){
     char recMessage[MAX_MESSAGE_SIZE];
     int argc;
     char ** argv;
@@ -79,4 +80,11 @@ void startThreadForNotification(){
             printOrderCancelMessage();
         }
     }
+}
+
+void startThreadForNotification(){
+    pthread_t tid;
+    printf("Before Thread\n");
+    //pthread_create(&tid, NULL, notify, NULL);
+    //pthread_join(tid, NULL);
 }

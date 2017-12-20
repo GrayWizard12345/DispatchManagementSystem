@@ -68,11 +68,11 @@ void authDriver(Driver *driver) {
 }
 
 void sendAuthMessage(Driver* driver){
-    char authMessage[MAX_MESSAGE_SIZE];
+    char *authMessage;
     memset(authMessage, 0, sizeof(authMessage));
     //TODO change to JSON encoder, not manually
-    getAuthJSON(authMessage, driver->id, driver->password);
-    //authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
+    //getAuthJSON(authMessage, driver->id, driver->password);
+    authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
     puts(authMessage);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
 }
