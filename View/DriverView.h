@@ -7,8 +7,9 @@
 #include "../Structures/Driver.h"
 
 void printWaitingMessage() {
-    printf("\n\n\t\t Waiting for the order\n");
-    printf("-------------------------------\n");\
+    printf("\n\tOperator will assign an order to you soon\n");
+    printf("\n\tWaiting for the order\n");
+    printf("--------------------------------------------------------------\n");
 }
 
 void printWelcomeMessage(){
@@ -17,27 +18,31 @@ void printWelcomeMessage(){
     sleep(1);
     system("clear");
     printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
-    printf("Operator will assign an order to you soon\n");
     printWaitingMessage();
 }
 
-void driverHasOrderView (double latitude, double longitude) {
-    printf("\t\tOrder information: \n");
-    printf("Client's name: %s\n");
-    printf("\n\n\tLocation to pick up: %lf,%lf\n", latitude, longitude);
-    printf("--------------------------\n");
-    printf("1.Arrived to pick up\n");
+void printOrderReceivedMessage(Driver* driver) {
+    printf("\t\t---------------YOU RECEIVED ORDER---------------\n");
+    printf("\n\tORDER INFORMATION\n");
 
-    int choice = 0;
-    while (choice != 1) {
-        scanf("%d", &choice);
-    }
+    printf("\n\tLocation to pick up: Latitude %lf, Longitude %lflng\n",
+           driver->currentOrder.source.latitude, driver->currentOrder.source.longitude);
+    printf("\tLocation to drive: Latitude %lf, Longitude %lflng\n",
+           driver->currentOrder.destination.latitude, driver->currentOrder.destination.longitude);
 
-    //send message to server
+    //TODO can remove after the problem with JSON is fixed
+    printf("\tUser ID: %d", driver->currentOrder.userId);
+
+    printf("\n\n----------------------------------------------------\n");
+}
+
+void printOrderCancelMessage() {
+    printf("\t\t--------------- ORDER CANCELED ---------------\n");
+    printWaitingMessage();
 }
 
 void driverWaitingClientView () {
-    printf("Waiting for the client\n");
+    printf("\tWaiting for the client\n");
 }
 
 /*void driverDriveView (double latitude, double longitude) {

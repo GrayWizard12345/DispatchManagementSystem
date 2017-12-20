@@ -41,7 +41,7 @@ int main() {
     startThreadForNotification();
 
 
-    //freeDriver(driver);
+    freeDriver(driver);
 
     return 0;
 }
@@ -69,9 +69,14 @@ void startThreadForNotification(){
 
         message_type = (int) strtol(argv[0], (char **)NULL, 10);
         if(message_type == ORDER_GET){
-            //parse order details from message
-            //init curentOrder field of driver
-            //show message to driver
+            //TODO change the initialization order to json parsing
+            //Order order = json_getOrderFromJson(recMessage);
+            Order order = receivedOrderInit(25);
+            setOrderAndChangeState(order, driver);
+            printOrderReceivedMessage(driver);
+        }else if(message_type == ORDER_CANCEL){
+            removeOrderAndChangeState(driver);
+            printOrderCancelMessage();
         }
     }
 }
