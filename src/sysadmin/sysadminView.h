@@ -18,7 +18,7 @@ void allDriversView();
 
 void sysadminView()
 {
-    int choice;
+    int choice = 0;
 
     printf("********       System administration        ********\n");
     printf("*                                                  *\n");
@@ -42,20 +42,18 @@ void sysadminView()
             case 2:
                 system("clear");
                 allDriversView();
-                sysadminView();
-                break;
+                return sysadminView();
             case 3:
                 system("clear");
                 editDriverView();
-                sysadminView();
-                break;
+                return sysadminView();
             case 4:
                 break;
 
             default:
                 break;
         }
-    }while (choice < 1 && choice > 4);
+    }while (choice < 1 || choice > 4);
 
 
 }
@@ -70,7 +68,6 @@ void addNewDriverView()
     fflush(stdout);
 
     /*Reading password*/
-    int check;
     char *password;
     char password2[INPUT_STRING_LENGTH] = {'\0'};
 
@@ -106,10 +103,9 @@ void allDriversView()
     printf("-----------------------------------------------\n");
     printf("-    Drivers registered in the DMSystem       -\n");
     DriverArray driverArray = getAllDrivers();
-    for (int i = 0; i < driverArray.size; ++i) {
+    for (int i = 0; i < driverArray.used; ++i) {
         printf("%d. %d\n", i, driverArray.array[i].id);
     }
-
 }
 
 
