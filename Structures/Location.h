@@ -19,7 +19,7 @@ typedef struct Location Location;
 struct Location {
     double latitude;
     double longitude;
-    double (*calculateDistanceTo)(Location *, Location *);
+    double (*calculateDistanceTo)(void* from, void* to);
     void (*setLongitude)(void* location, double longitude);
     void (*setLatitude)(void* location, double latitude);
 

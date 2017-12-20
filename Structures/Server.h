@@ -45,7 +45,7 @@ struct Server {
     }
 
     server->connection = malloc(sizeof(struct Connection));
-    Server server1 = *server;
+    struct Server server1 = *server;
     free(server);
     return server1;
 };

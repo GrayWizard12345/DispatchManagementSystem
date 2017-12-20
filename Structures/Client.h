@@ -19,7 +19,7 @@ bool client_orderExists(void* client);
 typedef struct Client Client;
 struct Client {
     Connection connection;
-    Order* order;
+    Order order;
     int id;
     int isUp;
     char* phoneNumber;
@@ -35,7 +35,7 @@ struct Client {
 }clientInit() {
     printf("Client constructor called!\n");
 
-    struct Client* client = malloc(sizeof(struct Location));
+    Client* client = malloc(sizeof(Location));
     client->order = NULL;
 
     client->orderTaxi = client_orderTaxi;
@@ -65,7 +65,8 @@ void client_setOrder(void* client, Order order) {
     Client* c = client;
     order.clientPhoneNumber = c->phoneNumber;
     order.clientName = c->name;
-    //c->order = order;
+    order.userId = c->id;
+    c->order = order;
 }
 
 //There were a problem conflicting types due to mismatch in function parameters
@@ -99,5 +100,5 @@ void client_cancelOrder(void* client, Order order) {
 
 bool client_orderExists(void* client) {
     Client* c = client;
-    return (c->order != NULL);
+    return (c->order.userId != -1);
 }
