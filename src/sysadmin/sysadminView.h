@@ -96,13 +96,6 @@ void addNewDriverView()
     strcpy(vehicle.number, number);
     strcpy(vehicle.model, model);
     strcpy(vehicle.color, color);
-//    printf("%d - %s", numberLen, number);
-//    if (number[numberLen-1] == '\n')
-//        number[numberLen-1] = '\0';
-//    if (model[modelLen-1] == '\n')
-//        model[modelLen-1] = '\0';
-//    if (color[colorLen-1] == '\n')
-//        color[colorLen-1] = '\0';
 
     if (strcmp(password, password2) == 0)
     {
@@ -133,7 +126,7 @@ void allDriversView()
     printf("-    Drivers registered in the DMSystem       -\n");
     DriverArray driverArray = getAllDrivers();
     for (int i = 0; i < driverArray.used; ++i) {
-        printf("%d.Driver id: %d\n  Vehicle password:%s\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].password, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
+        printf("%d.Driver id: %d\n  Driver's password:%s\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].password, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
     }
     printf("-----------------------------------------------\n");
 }
