@@ -71,6 +71,12 @@ int drivers_count = 0;
 
 int socket_accept_fails_cont = 0;
 
+pthread_t client_threads[MAX_CLIENTS];
+pthread_t driver_threads[MAX_DRIVERS];
+
+pthread_mutex_t mutex = PTHREAD_MUTEX_INITIALIZER;
+
+
 //Will accept incoming connections
 void acceptConnections(Server server);
 
@@ -107,9 +113,10 @@ void acceptConnections(Server server) {
         int j = -1;
         int sock;
         //this loop finds a not vacant place in activity array
+        pthread_mutex_lock(&mutex);
         while (client_is_active[++i] != 0);
         while (driver_is_active[++j] != 0);
-
+        pthread_mutex_unlock(&mutex);
 
         //Wait for a connection and accept it
         int addrlen = sizeof(server.connection->address);
@@ -135,21 +142,24 @@ void acceptConnections(Server server) {
             continue;
         }
 
-        //TODO parse initBuff from JSON to obj or string
+        //Get the type of the connected guy
+        char* type = json_getTypeFromJson(initBuff);
 
-        pthread_t client_threads[MAX_CLIENTS];
-        pthread_t driver_threads[MAX_DRIVERS];
+        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %s",initBuff, i, j, CLIENT, type);
 
-        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d",initBuff, i, j, CLIENT);
-
-        if(initBuff[0] == CLIENT)
+        if(type == CLIENT)
         {
+            pthread_mutex_lock(&mutex);
             client_is_active[i] = 1;
-
+            pthread_mutex_unlock(&mutex);
             //client_is_active[1][i] = (*server.clients[i]).id;
+
+            pthread_mutex_lock(&mutex);
             server.clients[i]->isUp = 1;
             server.clients[i]->id = i;
             server.clients[i]->connection.socket = sock;
+            pthread_mutex_unlock(&mutex);
+
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
 
             //Code can be optimized, as the same function is called in else branch
@@ -161,19 +171,26 @@ void acceptConnections(Server server) {
 
             //Thread parameters
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
+
+            pthread_mutex_lock(&mutex);
             session_params->obj = server.clients[i];
+            pthread_mutex_unlock(&mutex);
+
             session_params->obj_type = CLIENT;
 
             //Creation of the thread in which connection is maintained.
             pthread_create(&client_threads[i], NULL, startSession, session_params);
         }
-        else if(initBuff[0] == DRIVER)
+        else if(type == DRIVER)
         {
+            pthread_mutex_lock(&mutex);
             driver_is_active[j] = 1;
             //driver_is_active[j] = (*server.drivers[j]).id;
             server.drivers[i]->isUp = 1;
             server.drivers[j]->connection->socket = sock;
             server.drivers[j]->id = j;
+            pthread_mutex_unlock(&mutex);
+
             printf("SERVER ACCEPTED NEW CONNECTION FROM A DRIVER ON PORT %d .....\n", DEFAULT_PORT);
 
             memset(initBuff, 0, MAX_BUFFER);
@@ -183,11 +200,15 @@ void acceptConnections(Server server) {
 
 
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
+
+            pthread_mutex_lock(&mutex);
             session_params->obj = server.drivers[j];
             session_params->obj_type = DRIVER;
+            pthread_mutex_unlock(&mutex);
+
             pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
-        } else if(initBuff[0] == SERVER)
+        } else if(type == SERVER)
         {
             //Admin connected here
         } else
@@ -230,10 +251,11 @@ void* startSession(void* params) {
                     break;
 
                 printf("Client_%d: %s" ,client->id,buffer);
-                //TODO parse obtained JSON
-                message_t = rand(); //get message type form JSON
+                //Getting message type here, proper cast may be required later
+                message_t = json_getTypeFromJson(buffer) - 48; //get message type form JSON
 
-                send(client->connection.socket,buffer, strlen(buffer), 0);
+                //send(client->connection.socket,buffer, strlen(buffer), 0);
+                printf("MESSAGE TYPE: %d", message_t);
                 //React to client message
                 switch (message_t)
                 {
@@ -297,12 +319,15 @@ void* startSession(void* params) {
             exit(EXIT_FAILURE);
             break;
     }
+    //Connection is finished here and we need to reclaim memory and reset variables:
     if(obj_type == CLIENT)
     {
         close(client->connection.socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
+        pthread_mutex_lock(&mutex);
         client_is_active[client->id] = 0;
         clients_count--;
+        pthread_mutex_unlock(&mutex);
         client->isUp = 0;
         close(client->connection.socket);
 
@@ -311,8 +336,10 @@ void* startSession(void* params) {
     {
         close(driver->connection->socket);
         printf("CONNECTION WITH DRIVER_%d is CLOSED", driver->id);
+        pthread_mutex_lock(&mutex);
         driver_is_active[driver->id] = 0;
         drivers_count--;
+        pthread_mutex_unlock(&mutex);
         driver->isUp = 0;
         close(driver->connection->socket);
     }
