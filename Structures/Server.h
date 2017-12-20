@@ -302,8 +302,8 @@ void* startSession(void* params) {
 
                 switch (message_t)
                 {
-                    case 1:
-
+                    case LOG_IN:
+                        id = json_getIdFromJson(buffer);
                         break;
 
                     case 2:
