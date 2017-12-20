@@ -10,6 +10,7 @@
 #include <unistd.h>
 #include "sysadmin.h"
 #include "../../global_var/global_var.h"
+#include "DriverArray.h"
 
 void addNewDriverView();
 void editDriverView();
@@ -36,14 +37,17 @@ void sysadminView()
             case 1:
                 system("clear");
                 addNewDriverView();
+                sysadminView();
                 break;
             case 2:
                 system("clear");
                 allDriversView();
+                sysadminView();
                 break;
             case 3:
                 system("clear");
                 editDriverView();
+                sysadminView();
                 break;
             case 4:
                 break;
@@ -88,8 +92,6 @@ void addNewDriverView()
     system("clear");
     printf("\n\tDriver registered successfully!\n");
     printf("-----------------------------------------------\n\n");
-
-    return sysadminView();
 }
 
 
@@ -103,7 +105,7 @@ void allDriversView()
 {
     printf("-----------------------------------------------\n");
     printf("-    Drivers registered in the DMSystem       -\n");
-
+    DriverArray driverArray = getAllDrivers();
 
 
 }
