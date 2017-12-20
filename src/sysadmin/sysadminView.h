@@ -106,7 +106,9 @@ void allDriversView()
     printf("-----------------------------------------------\n");
     printf("-    Drivers registered in the DMSystem       -\n");
     DriverArray driverArray = getAllDrivers();
-
+    for (int i = 0; i < driverArray.size; ++i) {
+        printf("%d. %d\n", i, driverArray.array[i].id);
+    }
 
 }
 
