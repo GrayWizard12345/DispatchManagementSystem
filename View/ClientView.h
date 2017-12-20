@@ -79,13 +79,6 @@ void clientOrderAccepted() {
         scanf("%d", &choice);
     }
 
-    switch (choice) {
-
-        case 1:
-            break;
-        default:
-            break;
-    }
-
+    // Order canceled, do smth
 
 }

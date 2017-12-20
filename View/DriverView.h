@@ -48,12 +48,5 @@ void driverWaitingClientView () {
     while (choice != 1) {
         scanf("%d", &choice);
     }
-
-    switch (choice) {
-
-        case 1:
-            break;
-        default:
-            break;
-    }
+    // Client delivered, do smth
 }*/

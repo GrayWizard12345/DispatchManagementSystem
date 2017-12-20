@@ -30,7 +30,7 @@ struct Client {
     void (*setOrder)(void* client, Order order);
     void (*setPrivateInformation)(void* client, char* name, char* phoneNumber);
     void (*setConnection)(void* client, Connection connection);
-    void (*orderExists)(void* client);
+    bool (*orderExists)(void* client);
 
 }clientInit() {
     printf("Client constructor called!\n");
@@ -69,7 +69,11 @@ void client_setOrder(void* client, Order order) {
     c->order = order;
 }
 
-//There were a problem conflicting types due to mismatch in function parameters
+bool client_orderExists(void* client) {
+    Client* c = client;
+    return (c->order.userId != -1);
+}
+
 void client_orderTaxi(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
@@ -81,7 +85,6 @@ void client_orderTaxi(void* client, Order order) {
 }
 }
 
-//There were a problem conflicting types due to mismatch in function parameters
 void client_cancelOrder(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
@@ -96,9 +99,4 @@ void client_cancelOrder(void* client, Order order) {
  * Notify user
  */
 }
-}
-
-bool client_orderExists(void* client) {
-    Client* c = client;
-    return (c->order.userId != -1);
 }
