@@ -11,16 +11,25 @@
 #include "../Structures/Driver.h"
 #include "../global_var/enums.h"
 
+
 // AuthData
 char* json_getJsonStringFromAuthData(int id, char* password) {
     cJSON *root;
 
-    puts("password: ");
-    puts(password);
-
     root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "message_type", LOG_IN);
     cJSON_AddNumberToObject(root, "id", id);
     cJSON_AddStringToObject(root, "password", password);
+
+    return cJSON_Print(root);
+}
+
+char* json_getJsonStringForFirstMessage(USER_TYPE user_type) {
+    cJSON *root;
+
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "message_type", AUTHENTIFICATION);
+    cJSON_AddNumberToObject(root, "user_type", user_type);
 
     return cJSON_Print(root);
 }
@@ -128,6 +137,15 @@ char* json_getJsonStringFromVehicle(Vehicle vehicle) {
     cJSON_AddStringToObject(root, "color", vehicle.color );
     cJSON_AddStringToObject(root, "model", vehicle.model);
     root = json_addTypeToJson(root, "Vehicle");
+
+    return cJSON_Print(root);
+}
+
+char* json_getStateChangeMess(STATE state){
+    cJSON *root;
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "message_type", STATE_CHANGE);
+    cJSON_AddNumberToObject(root, "state", state);
 
     return cJSON_Print(root);
 }

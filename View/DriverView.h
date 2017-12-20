@@ -18,7 +18,6 @@ void printWelcomeMessage(){
     sleep(1);
     system("clear");
     printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
-    printWaitingMessage();
 }
 
 void printOrderReceivedMessage(Driver* driver) {
@@ -41,8 +40,27 @@ void printOrderCancelMessage() {
     printWaitingMessage();
 }
 
-void driverWaitingClientView () {
-    printf("\tWaiting for the client\n");
+int getInputOnArrival(Driver *driver){
+    printf("Write 1 when you arrive to the client");
+    int choice = 0;
+    while (choice != 0 && driver->isUp == 1)
+        scanf("%d", &choice);
+
+    return choice;
+}
+
+void getInputOnPickedUp(){
+    printf("Write 1 when you pick up the client");
+    int choice = 0;
+    while (choice != 0)
+        scanf("%d", &choice);
+}
+
+void getInputOnArrivalDestination(){
+    printf("Write 1 when you arrive to the destination");
+    int choice = 0;
+    while (choice != 0)
+        scanf("%d", &choice);
 }
 
 /*void driverDriveView (double latitude, double longitude) {

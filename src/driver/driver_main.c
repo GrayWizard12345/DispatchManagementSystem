@@ -13,22 +13,21 @@
 #include <string.h>
 #include <arpa/inet.h>
 #include <pthread.h>
+#include <time.h>
+#include <stdlib.h>
 
 #include "../../Structures/Connection.h"
 #include "../../Structures/Driver.h"
 #include "../../View/DriverView.h"
-#include "../../global_var/global_var.h"
-#include "../../JSON/JSON_parser.h"
-#include "../../JSON/JSON_encoder.h"
-
-#include "../../utilities/string_splitting.h"
 
 Driver* driver;
 char sendMessage[MAX_MESSAGE_SIZE];
 
 void startThreadForNotification();
+void startThreadForLocationUpdate();
 void printMessage(char*);
 void notify(void*);
+void sendLocation(void*);
 
 int main() {
     Connection c = connectToServer();
@@ -41,9 +40,22 @@ int main() {
     printWelcomeMessage();
 
     startThreadForNotification();
+    startThreadForLocationUpdate();
 
+    int choice;
     while (driver->isUp == 1){
-        
+        printWaitingMessage();
+        //wait until the driver gets order
+        while (hasOder(driver) == -1);
+        choice = getInputOnArrival(driver);
+        if(choice != 1)
+            continue;
+
+        notifyOnArrivalAndChangeState(driver);
+        getInputOnPickedUp();
+        notifyOnPickUpAndChangeState(driver);
+        getInputOnArrivalDestination();
+        notifyOnArrivalDestination(driver);
     }
 
     freeDriver(driver);
@@ -53,26 +65,17 @@ int main() {
 
 void notify(void *vargp){
     char recMessage[MAX_MESSAGE_SIZE];
-    int argc;
-    char ** argv;
 
     MESSAGE_TYPE message_type;
 
     while(driver->isUp == 1){
         memset(recMessage, 0, sizeof(recMessage));
         read(driver->connection->socket, recMessage, sizeof(recMessage));
-        if (argc_argv (recMessage, &argc, &argv) != OK) {
-            fprintf (stderr, "Something went wrong.\n");
-            exit (EXIT_FAILURE);
-        }
         fflush(stdout);
-        puts(argv[0]);
 
-        message_type = (int) strtol(argv[0], (char **)NULL, 10);
+        message_type = json_getMessageType(recMessage);
         if(message_type == ORDER_GET){
-            //TODO change the initialization order to json parsing
-            //Order order = json_getOrderFromJson(recMessage);
-            Order order = receivedOrderInit(25);
+            Order order = json_getOrderFromJson(recMessage);
             setOrderAndChangeState(order, driver);
             printOrderReceivedMessage(driver);
         }else if(message_type == ORDER_CANCEL){
@@ -84,7 +87,29 @@ void notify(void *vargp){
 
 void startThreadForNotification(){
     pthread_t tid;
-    printf("Before Thread\n");
     pthread_create(&tid, NULL, notify, NULL);
     pthread_join(tid, NULL);
 }
+
+void startThreadForLocationUpdate(){
+    srand(time(NULL));
+    pthread_t tid;
+    pthread_create(&tid, NULL, sendLocation, NULL);
+    pthread_join(tid, NULL);
+}
+
+void sendLocation(void *vargp){
+    char *mess;
+    while (driver->isUp == 1){
+        driver->location.longitude = rand() % 181;
+        driver->location.latitude = rand() % 91;
+        memset(&mess, 0, sizeof(mess));
+        mess = json_getJsonStringFromLocation(driver->location);
+        send(driver->connection->socket, mess, strlen(mess), 0);
+        sleep(60);
+    }
+
+    free(mess);
+}
+
+

@@ -128,3 +128,9 @@ Vehicle json_getVehicleFromJson(char* json_string) {
 
     return vehicle;
 }
+
+int json_getMessageType(char* json_string){
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "message_type");
+    return number_item->valueint;
+}

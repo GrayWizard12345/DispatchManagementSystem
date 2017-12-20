@@ -47,6 +47,13 @@ Driver* initDriver(Connection *conn) {
 
     memset(driver->password, 0, sizeof(driver->password));
 
+    char *firstMessage;
+    memset(&firstMessage, 0, sizeof(firstMessage));
+    firstMessage = json_getJsonStringForFirstMessage(DRIVER);
+    puts(firstMessage);
+    send(driver->connection->socket, firstMessage, strlen(firstMessage), 0);
+    free(firstMessage);
+
     char type[1];
     sprintf(type, "%d", DRIVER);
     send(driver->connection->socket, type, 1, 0);
@@ -74,6 +81,7 @@ void sendAuthMessage(Driver* driver){
     authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
     puts(authMessage);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
+    free(authMessage);
 }
 
 void receiveAuthMessage(Driver* driver){
@@ -115,4 +123,32 @@ void getPassword(char *password) {
 
 void setVehicle(Driver* driver, Vehicle vehicle){
     driver->vehicle = vehicle;
+}
+
+int hasOder(Driver* driver){
+    return driver->currentOrder.userId;
+}
+
+void sendMessage(Driver *driver){
+    char *mess;
+    memset(&mess, 0, sizeof(mess));
+    mess = json_getStateChangeMess(driver->state);
+    puts(mess);
+    send(driver->connection->socket, mess, strlen(mess), 0);
+    free(mess);
+}
+
+void notifyOnArrivalAndChangeState(Driver *driver){
+    driver->state = WAITING_CLIENT;
+    sendMessage(driver);
+}
+
+void notifyOnPickUpAndChangeState(Driver *driver){
+    driver->state = PICKED_UP;
+    sendMessage(driver);
+}
+
+void notifyOnArrivalDestination(Driver *driver){
+    driver->state = FREE;
+    sendMessage(driver);
 }
