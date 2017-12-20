@@ -44,7 +44,7 @@ int addNewDriver(int id, char *password, Vehicle vehicle)
     }
     if(dbFile != NULL)
     {
-        fprintf(dbFile, "#%d %s\n", id, password);
+        fprintf(dbFile, "#%d\t%s\t%s\t%s\t%s\n", id, password, vehicle.number, vehicle.model, vehicle.color);
     }
     fclose(dbFile);
     return 1;
@@ -104,7 +104,7 @@ DriverArray getAllDrivers()
         char color[MAX_BUFFER];
         // getting driver data from the current line
         // order matters
-        sscanf(line, "#%d %[^' '|\t]s %[^' '|\t]s %[^' '|\t]s %[^' '|\t]s", &foundID, password, number, model, color);
+        sscanf(line, "#%d %[^\t] %[^\t] %[^\t] %[^\t]", &foundID, password, number, model, color);
 
         //nothing scary, just replacing \n character if there is any
         if (password[strlen(password)-1] == '\n')
@@ -116,14 +116,12 @@ DriverArray getAllDrivers()
         if (color[strlen(color)-1] == '\n')
             color[strlen(color)-1] = '\0';
 
-        Vehicle vehicle;
-        strcpy(vehicle.number, number);
-        strcpy(vehicle.model, model);
-        strcpy(vehicle.color, color);
-
 
         Driver driver;
-        driver.vehicle = vehicle;
+        strcpy(driver.vehicle.number, number);
+        strcpy(driver.vehicle.model, model);
+        strcpy(driver.vehicle.color, color);
+
         driver.id = foundID;
         strcpy(driver.password, password);
 
