@@ -22,8 +22,9 @@ typedef struct Driver Driver;
 
 int getID();
 void getPassword(char *password);
-int sendAuthMessage(Driver*);
-void receiveAuthMessage(Driver*);
+int sendAuthMessage(Driver *);
+int getMessageFromServer(Driver*);
+void receiveDriverData(Driver *);
 void setVehicle(Driver*, Vehicle);
 
 struct Driver {
@@ -74,27 +75,37 @@ void authDriver(Driver *driver) {
         driver->id = getID();
         getPassword(driver->password);
 
-        messageType = sendAuthMessage(driver);
+        sendAuthMessage(driver);
+        printf("Authentifaction\n");
+        messageType = getMessageFromServer(driver);
         if(messageType == ACCESS_DENIED){
-            printf("Try again, incorrect ID or password");
+            printf("Try again, incorrect ID or password\n");
         }
     }
-    receiveAuthMessage(driver);
+    receiveDriverData(driver);
 }
 
-int sendAuthMessage(Driver* driver){
+int getMessageFromServer(Driver *driver) {
+    char* buffer;
+    memset(&buffer, 0, sizeof(buffer));
+    read(driver->connection->socket, buffer, sizeof(buffer));
+    printf(buffer);
+    int messageType = json_getMessageType(buffer);
+    free(buffer);
+    return messageType;
+}
+
+int sendAuthMessage(Driver *driver){
     char *authMessage;
     memset(&authMessage, 0, sizeof(authMessage));
     authMessage = json_getJsonStringFromLoginData(driver->id, driver->password);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
-    memset(&authMessage, 0, sizeof(authMessage));
-    read(driver->connection->socket, authMessage, sizeof(authMessage));
-    int messageType = json_getMessageType(authMessage);
+    int messType = json_getMessageType(authMessage);
     free(authMessage);
-    return messageType;
+    return messType;
 }
 
-void receiveAuthMessage(Driver* driver){
+void receiveDriverData(Driver *driver){
     printf("\nRECEIVING DRIVER DATA\n");
     char authMessage[MAX_MESSAGE_SIZE];
     memset(authMessage, 0, sizeof(authMessage));
