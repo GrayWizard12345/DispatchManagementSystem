@@ -11,7 +11,7 @@
 #include "../../Structures/Vehicle.h"
 #include "../../Structures/DriverArray.h"
 
-const char *dbPath = "database.db";
+const char *dbPath = "/../src/sysadmin/database.db";
 FILE *dbFile = NULL;
 
 int checkDriver(int id);
