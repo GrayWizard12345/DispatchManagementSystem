@@ -22,12 +22,16 @@
 
 Driver* driver;
 
+pthread_t notifThreadID;
+pthread_t locationThreadID;
+
 void startThreadForNotification();
 void startThreadForLocationUpdate();
 void printMessage(char*);
 void notify(void*);
 void sendLocation(void*);
 
+//TODO close thread when there is no connection
 int main() {
     Connection c = connectToServer();
     if(c.socket == 0)
@@ -43,7 +47,7 @@ int main() {
 
     int choice;
     while (driver->isUp == 1){
-        printWaitingMessage();
+        /*printWaitingMessage();
         //wait until the driver gets order
         while (hasOder(driver) == -1);
         choice = getInputOnArrival(driver);
@@ -54,12 +58,21 @@ int main() {
         getInputOnPickedUp();
         notifyOnPickUpAndChangeState(driver);
         getInputOnArrivalDestination();
-        notifyOnArrivalDestination(driver);
+        notifyOnArrivalDestination(driver);*/
     }
 
     freeDriver(driver);
 
     return 0;
+}
+
+void startThreadForNotification(){
+    pthread_create(&notifThreadID, NULL, notify, NULL);
+}
+
+void startThreadForLocationUpdate(){
+    srand(time(NULL));
+    pthread_create(&locationThreadID, NULL, sendLocation, NULL);
 }
 
 void notify(void *vargp){
@@ -82,19 +95,8 @@ void notify(void *vargp){
             printOrderCancelMessage();
         }
     }
-}
 
-void startThreadForNotification(){
-    pthread_t tid;
-    pthread_create(&tid, NULL, notify, NULL);
-    pthread_join(tid, NULL);
-}
-
-void startThreadForLocationUpdate(){
-    srand(time(NULL));
-    pthread_t tid;
-    pthread_create(&tid, NULL, sendLocation, NULL);
-    pthread_join(tid, NULL);
+    pthread_join(notifThreadID, NULL);
 }
 
 void sendLocation(void *vargp){
@@ -108,6 +110,7 @@ void sendLocation(void *vargp){
         sleep(60);
     }
 
+    pthread_join(locationThreadID, NULL);
     free(mess);
 }
 

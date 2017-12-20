@@ -21,12 +21,12 @@ void printWelcomeMessage(){
 }
 
 void printOrderReceivedMessage(Driver* driver) {
-    printf("\t\t---------------YOU RECEIVED ORDER---------------\n");
+    printf("\n\n\t\t---------------YOU RECEIVED ORDER---------------\n");
     printf("\n\tORDER INFORMATION\n");
 
     printf("\n\tLocation to pick up: Latitude %lf, Longitude %lf\n",
            driver->currentOrder.source.latitude, driver->currentOrder.source.longitude);
-    printf("\tLocation to drive: Latitude %lf, Longitude %lflng\n",
+    printf("\tLocation to drive: Latitude %lf, Longitude %lf\n",
            driver->currentOrder.destination.latitude, driver->currentOrder.destination.longitude);
 
     //TODO can remove after the problem with JSON is fixed
@@ -36,14 +36,14 @@ void printOrderReceivedMessage(Driver* driver) {
 }
 
 void printOrderCancelMessage() {
-    printf("\t\t--------------- ORDER CANCELED ---------------\n");
+    printf("\n\n\t\t--------------- ORDER CANCELED ---------------\n");
     printWaitingMessage();
 }
 
 int getInputOnArrival(Driver *driver){
     printf("Write 1 when you arrive to the client");
     int choice = 0;
-    while (choice != 0 && driver->isUp == 1)
+    while (choice != 1 && driver->isUp == 1)
         scanf("%d", &choice);
 
     return choice;

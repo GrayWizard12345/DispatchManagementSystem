@@ -36,6 +36,7 @@ Location json_getLocationFromJson(char* json_string) {
 
 // Order
 Order json_getOrderFromJson(char* json_string) {
+    puts(json_string);
     cJSON *root = cJSON_Parse(json_string);
     cJSON *source = cJSON_GetObjectItemCaseSensitive(root, "source");
     cJSON *destination = cJSON_GetObjectItemCaseSensitive(root, "destination");
@@ -115,7 +116,7 @@ Vehicle json_getVehicleFromJson(char* json_string) {
         number = number_item->valuestring;
     }
     if (cJSON_IsString(model_item)) {
-        model_item = model_item->valuestring;
+        model = model_item->valuestring;
     }
     if (cJSON_IsString(color_item)) {
         color = color_item->valuestring;

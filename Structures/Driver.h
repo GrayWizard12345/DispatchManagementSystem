@@ -45,6 +45,8 @@ Driver* initDriver(Connection *conn) {
     driver->location.latitude = 48;
     driver->location.longitude = 60;
 
+    driver->currentOrder.userId = -1;
+
     memset(driver->password, 0, sizeof(driver->password));
 
     char *firstMessage;
@@ -77,8 +79,7 @@ void authDriver(Driver *driver) {
 void sendAuthMessage(Driver* driver){
     char *authMessage;
     memset(&authMessage, 0, sizeof(authMessage));
-    authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
-    puts(authMessage);
+    authMessage = json_getJsonStringFromLoginData(driver->id, driver->password);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
     free(authMessage);
 }
@@ -91,7 +92,7 @@ void receiveAuthMessage(Driver* driver){
     Vehicle vehicle = json_getVehicleFromJson(authMessage);
     setVehicle(driver, vehicle);
     printf("\nRECEIVED DATA SUCCESSFULLY\n");
-    printf("\tYour vehicle date\n");
+    printf("\tYour vehicle data\n");
     printVehicle(vehicle);
 }
 
