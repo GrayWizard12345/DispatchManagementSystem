@@ -13,7 +13,7 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "../src/sysadmin/sysadmin.h"
+#include "../src/sysadmin/Sysadmin.h"
 #include "../global_var/global_var.h"
 #include "../Structures/DriverArray.h"
 
@@ -103,7 +103,7 @@ void addNewDriverView()
 
     if (strcmp(password, password2) == 0)
     {
-        if(addNewDriver(id, password, vehicle) == 0)
+        if(0 == addNewDriver(id, password, vehicle))
         {
             return addNewDriverView();
         }
@@ -151,7 +151,7 @@ static int myGetLine (char *prmpt, char *buff, size_t sz) {
         printf ("%s", prmpt);
         fflush (stdout);
     }
-    if (fgets (buff, sz, stdin) == NULL)
+    if (fgets (buff, (int) sz, stdin) == NULL)
         return NO_INPUT;
 
     // If it was too long, there'll be no newline. In that case, we flush
