@@ -27,6 +27,7 @@ int openDB()
     }
 }
 
+
 int addNewDriver(int id, char *password, Vehicle vehicle)
 {
     int position = checkDriver(id);
@@ -44,7 +45,7 @@ int addNewDriver(int id, char *password, Vehicle vehicle)
     }
     if(dbFile != NULL)
     {
-        fprintf(dbFile, "#%d\t%s\t%s\t%s\t%s\n", id, password, vehicle.number, vehicle.model, vehicle.color);
+        fprintf(dbFile, "#%d\t%s\t%s\t%s\t%s\n", id, password, vehicle.number, vehicle.model, vehicle.color); // The longest line of my code haha
     }
     fclose(dbFile);
     return 1;

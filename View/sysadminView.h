@@ -5,6 +5,7 @@
 #ifndef SYSADMINVIEW_H
 #define SYSADMINVIEW_H
 
+/*Enum constants needed in myGetline*/
 #define OK       0
 #define NO_INPUT 1
 #define TOO_LONG 2
@@ -16,15 +17,19 @@
 #include "../global_var/global_var.h"
 #include "../Structures/DriverArray.h"
 
+/*Pre-declaration of functions used in this file*/
 void addNewDriverView();
-void editDriverView();
 void allDriversView();
+void editDriverView();
+void deleteDriverView();
+
 static int myGetLine (char *prmpt, char *buff, size_t sz);
+
+
 
 void sysadminView()
 {
     int choice = 0;
-
     printf("********       System administration        ********\n");
     printf("*                                                  *\n");
     printf("*    1.Add new DRIVER                              *\n");
@@ -40,27 +45,25 @@ void sysadminView()
         switch (choice)
         {
             case 1:
-                system("clear");
+                system("@cls||clear");
                 addNewDriverView();
-                sysadminView();
-                break;
+                return sysadminView(); //Back to main menu
             case 2:
-                system("clear");
+                system("@cls||clear");
                 allDriversView();
-                return sysadminView();
+                return sysadminView(); //Back to main menu
             case 3:
-                system("clear");
+                system("@cls||clear");
                 editDriverView();
-                return sysadminView();
+                return sysadminView(); //Back to main menu
             case 4:
-                break;
-
+                system("@cls||clear");
+                deleteDriverView();
+                return sysadminView(); //Back to main menu
             default:
                 break;
         }
     }while (choice < 1 || choice > 4);
-
-
 }
 
 void addNewDriverView()
@@ -87,6 +90,7 @@ void addNewDriverView()
     strcpy(password2, password);
     password = getpass("  *Please confirm the new password: ");
 
+    //TODO: Shorten the line somehow
     myGetLine("Please enter the new Driver's vehicle number: ", number, bufferSizeForNumber);
     myGetLine("Please enter the new Driver's vehicle model: ", model, bufferSize);
     myGetLine("Please enter the new Driver's vehicle color: ", color, bufferSize);
@@ -116,9 +120,13 @@ void addNewDriverView()
 
 void editDriverView()
 {
-
+    //TODO: editDriverView WTF?
 }
 
+void deleteDriverView()
+{
+    //TODO: deleteDriverView?
+}
 
 void allDriversView()
 {
@@ -126,9 +134,13 @@ void allDriversView()
     printf("-    Drivers registered in the DMSystem       -\n");
     DriverArray driverArray = getAllDrivers();
     for (int i = 0; i < driverArray.used; ++i) {
-        printf("%d.Driver id: %d\n  Driver's password:%s\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].password, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
+        printf("%d.Driver id: %d\n  Driver's password:%s\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].password, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color); // This line is even longer))
     }
     printf("-----------------------------------------------\n");
+    printf("Press any key to close...\n");
+    getchar();
+    getchar();
+    system("@cls||clear");
 }
 
 
