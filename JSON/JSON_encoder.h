@@ -164,3 +164,13 @@ char *json_getPasswordFromJson(char* json_string)
 
     return passwd;
 }
+
+char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE message_type) {
+    cJSON *root;
+
+    root = cJSON_CreateObject();
+    cJSON_AddNumberToObject(root, "message_type", message_type);
+    cJSON_AddNumberToObject(root, "user_type", user_type);
+
+    return cJSON_Print(root);
+}

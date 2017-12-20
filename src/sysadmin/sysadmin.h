@@ -104,7 +104,7 @@ DriverArray getAllDrivers()
         char color[MAX_BUFFER];
         // getting driver data from the current line
         // order matters
-        sscanf(line, "#%d %[^\t] %[^\t] %[^\t] %[^\t]", &foundID, password, number, model, color);
+        sscanf(line, "#%d %[^\t] %[^\t] %[^\t] %[^\t]\n", &foundID, password, number, model, color);
 
         //nothing scary, just replacing \n character if there is any
         if (password[strlen(password)-1] == '\n')
