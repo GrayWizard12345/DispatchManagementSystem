@@ -12,9 +12,9 @@
 #include <stdio.h>
 #include <string.h>
 #include <unistd.h>
-#include "sysadmin.h"
-#include "../../global_var/global_var.h"
-#include "DriverArray.h"
+#include "../src/sysadmin/sysadmin.h"
+#include "../global_var/global_var.h"
+#include "../Structures/DriverArray.h"
 
 void addNewDriverView();
 void editDriverView();

@@ -9,7 +9,7 @@
 #include <stdlib.h>
 #include "../../Structures/Driver.h"
 #include "../../Structures/Vehicle.h"
-#include "DriverArray.h"
+#include "../../Structures/DriverArray.h"
 
 const char *dbPath = "database.db";
 FILE *dbFile = NULL;

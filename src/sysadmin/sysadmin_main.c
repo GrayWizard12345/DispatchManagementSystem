@@ -1,5 +1,5 @@
 #include <stdio.h>
-#include "sysadminView.h"
+#include "../../View/sysadminView.h"
 
 int main() {
     sysadminView();

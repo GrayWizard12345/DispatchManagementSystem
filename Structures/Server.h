@@ -17,6 +17,8 @@
 #include "Structures.h"
 #include "../global_var/enums.h"
 #include "../JSON/JSON_encoder.h"
+#include "../src/sysadmin/sysadmin.h"
+#include "../Structures/DriverArray.h"
 
 typedef struct Server Server;
 struct Server {
@@ -27,6 +29,7 @@ struct Server {
     struct Driver *drivers[MAX_DRIVERS];
     struct Client *clients[MAX_CLIENTS];
     struct Driver *existingDrivers[MAX_DRIVERS];    //drivers to be read from db
+    int drivers_count;
     //Socket options
     int opt;
 
@@ -38,6 +41,13 @@ struct Server {
     struct Server* server = malloc(sizeof(struct Server));
 
     //read drivers from db
+    DriverArray driverArray = getAllDrivers();
+    server->drivers_count = driverArray.used;
+    for (int i = 0; i < driverArray.used; ++i) {
+        server->existingDrivers[i] = driverArray.array;
+        printf("%d.Driver id: %d\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
+    }
+    
 
     //Initializing the arrays
     for (int i = 0; i < MAX_CLIENTS; ++i) {
@@ -244,7 +254,7 @@ void* startSession(void* params) {
     Server *server = session_params->server;
 
     int message_t;
-    char buffer[MAX_BUFFER];
+    char json_string_read[MAX_BUFFER];
 
     Client* client;
     Driver* driver;
@@ -255,10 +265,10 @@ void* startSession(void* params) {
             client = session_params->obj;
             while (client->isUp == 1)
             {
-                memset(buffer, 0 , MAX_BUFFER);
+                memset(json_string_read, 0 , MAX_BUFFER);
 
                 int read_status;
-                if((read_status = read(client->connection->socket, buffer, MAX_BUFFER)) < 0)
+                if((read_status = read(client->connection->socket, json_string_read, MAX_BUFFER)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
@@ -267,9 +277,9 @@ void* startSession(void* params) {
                 } else if(read_status == 0)
                     break;
 
-                printf("Client_%d: %s" ,client->id,buffer);
+                printf("Client_%d: %s" ,client->id,json_string_read);
                 //Getting message type here, proper cast may be required later
-                message_t = json_getMessageType(buffer); //get message type form JSON
+                message_t = json_getMessageType(json_string_read); //get message type form JSON
 
                 printf("MESSAGE TYPE: %d", message_t);
                 //React to client message
@@ -295,10 +305,10 @@ void* startSession(void* params) {
             driver = session_params->obj;
             while (driver->isUp == 1)
             {
-                memset(buffer, 0 , MAX_BUFFER);
+                memset(json_string_read, 0 , MAX_BUFFER);
 
                 int read_status;
-                if(( read_status = read(driver->connection->socket, buffer, MAX_BUFFER)) < 0)
+                if(( read_status = read(driver->connection->socket, json_string_read, MAX_BUFFER)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH DRIVER_%d IS LOST\n", driver->id);
@@ -312,18 +322,20 @@ void* startSession(void* params) {
                 }
 
                 //Getting message type from Json
-                message_t = json_getMessageType(buffer); //get message type form JSON
+                message_t = json_getMessageType(json_string_read); //get message type form JSON
 
-                printf("Driver_%d: %s" ,driver->id,buffer);
+                printf("Driver_%d: %s" ,driver->id,json_string_read);
 
                 char* jsonString = malloc(MAX_BUFFER);
+
+                //json_string_read contains json already
                 switch (message_t)
                 {
                     case LOG_IN:
 
                         //Get driver credintails from JSON
-                        driver->id = json_getIdFromJson(buffer);
-                        strcpy(driver->password, json_getPasswordFromJson(buffer));
+                        driver->id = json_getIdFromJson(json_string_read);
+                        strcpy(driver->password, json_getPasswordFromJson(json_string_read));
 
                         //Check if this driver exists in db
                         int accessGranted = 1;
@@ -370,7 +382,12 @@ void* startSession(void* params) {
 
                         break;
 
-                    case 2:
+                    case LOCATION_CHANGE:
+
+
+                        driver->location = json_getLocationFromJson(json_string_read);
+
+
                         break;
 
                     default:
@@ -410,5 +427,4 @@ void* startSession(void* params) {
         driver->isUp = 0;
         close(driver->connection->socket);
     }
-
 }
