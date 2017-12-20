@@ -14,7 +14,6 @@
 #include "Vehicle.h"
 #include "Order.h"
 #include "../JSON/JSON_encoder.h"
-#include "../JSON/JSON_parser.h"
 #include "../global_var/global_var.h"
 #include "../global_var/enums.h"
 
@@ -62,6 +61,9 @@ void freeDriver(Driver *driver) {
 void authDriver(Driver *driver) {
     driver->id = getID();
     getPassword(driver->password);
+    puts("Driver password ");
+    puts(driver->password);
+    puts("*");
 
     sendAuthMessage(driver);
     receiveAuthMessage(driver);
@@ -69,7 +71,7 @@ void authDriver(Driver *driver) {
 
 void sendAuthMessage(Driver* driver){
     char *authMessage;
-    memset(authMessage, 0, sizeof(authMessage));
+    memset(&authMessage, 0, sizeof(authMessage));
     //TODO change to JSON encoder, not manually
     //getAuthJSON(authMessage, driver->id, driver->password);
     authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
@@ -84,6 +86,7 @@ void receiveAuthMessage(Driver* driver){
     read(driver->connection->socket, authMessage, sizeof(authMessage));
     //TODO remove the message display
     printf("received: %s", authMessage);
+    Vehicle vehicle =
     //parse and get other fields of Driver
     //if wrong exit(0);
 }
@@ -99,6 +102,7 @@ void getPassword(char *password) {
     getchar();
     printf("Write your password ");
     fgets(password, sizeof(password), stdin);
+    password[strcspn(password, "\n")] = 0;
 }
 
 void setOrderAndChangeState(Order order, Driver *driver){

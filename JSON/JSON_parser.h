@@ -177,29 +177,3 @@ Client json_getClientFromJson(char* json_string) {
 
     return client;
 }
-
-char* json_getJsonStringFromClient(Client client) {
-    cJSON *root;
-    cJSON *order = json_getJsonFromOrder(client.order);
-    root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "id", client.id);
-    cJSON_AddNumberToObject(root, "isUp", client.isUp);
-    cJSON_AddStringToObject(root, "name", client.name);
-    cJSON_AddStringToObject(root, "phoneNumber", client.phoneNumber);
-    cJSON_AddItemToObject(root, "order", order);
-    root = json_addTypeToJson(root, "Client");
-
-    return cJSON_Print(root);
-}
-
-
-// AuthData
-char* json_getJsonStringFromAuthData(int id, char* password) {
-    cJSON *root;
-
-    root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "id", id);
-    cJSON_AddStringToObject(root, "password", password);
-
-    return cJSON_Print(root);
-}
