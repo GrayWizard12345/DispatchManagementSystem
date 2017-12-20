@@ -11,27 +11,6 @@
 #include "../Structures/Order.h"
 #include "../Structures/Driver.h"
 
-
-// Type
-// Send by all objects connecting to the server, to tell the server their type
-char* json_getTypeFromJson(char* json_string) {
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "type");
-
-    char* type = "none";
-    if (cJSON_IsString(type_item)) {
-        type = type_item->valuestring;
-    }
-
-    return type;
-}
-
-cJSON* json_addTypeToJson(cJSON* root, char* type) {
-    cJSON_AddStringToObject(root, "type", type);
-    return root;
-}
-
-
 // Location
 Location json_getLocationFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
@@ -53,27 +32,6 @@ Location json_getLocationFromJson(char* json_string) {
 
     return location;
 }
-
-char* json_getJsonStringFromLocation(Location location) {
-    cJSON* root;
-    root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "longitude", location.longitude);
-    cJSON_AddNumberToObject(root, "latitude", location.latitude);
-    root = json_addTypeToJson(root, "Location");
-
-    return cJSON_Print(root);
-}
-
-cJSON* json_getJsonFromLocation(Location location) {
-    cJSON* root;
-    root = cJSON_CreateObject();
-    cJSON_AddNumberToObject(root, "longitude", location.longitude);
-    cJSON_AddNumberToObject(root, "latitude", location.latitude);
-    root = json_addTypeToJson(root, "Location");
-
-    return root;
-}
-
 
 // Order
 Order json_getOrderFromJson(char* json_string) {
@@ -101,43 +59,6 @@ Order json_getOrderFromJson(char* json_string) {
 
     return order;
 }
-
-char* json_getJsonStringFromOrder(Order order) {
-    cJSON* root;
-    cJSON* srcLoc;
-    cJSON* destLoc;
-    srcLoc = json_getJsonFromLocation(order.source);
-    destLoc = json_getJsonFromLocation(order.destination);
-    root = cJSON_CreateObject();
-
-    cJSON_AddItemToObject(root, "source", srcLoc);
-    cJSON_AddItemToObject(root, "destination", destLoc);
-    cJSON_AddStringToObject(root, "clientName", order.clientName);
-    cJSON_AddStringToObject(root, "clientPhoneNumber", order.clientPhoneNumber);
-    cJSON_AddNumberToObject(root, "userId", order.userId);
-    root = json_addTypeToJson(root, "Order");
-
-    return cJSON_Print(root);
-}
-
-cJSON* json_getJsonFromOrder(Order order) {
-    cJSON* root;
-    cJSON* srcLoc;
-    cJSON* destLoc;
-    srcLoc = json_getJsonFromLocation(order.source);
-    destLoc = json_getJsonFromLocation(order.destination);
-    root = cJSON_CreateObject();
-
-    cJSON_AddItemToObject(root, "source", srcLoc);
-    cJSON_AddItemToObject(root, "destination", destLoc);
-    cJSON_AddStringToObject(root, "clientName", order.clientName);
-    cJSON_AddStringToObject(root, "clientPhoneNumber", order.clientPhoneNumber);
-    cJSON_AddNumberToObject(root, "userId", order.userId);
-    root = json_addTypeToJson(root, "Order");
-
-    return root;
-}
-
 
 // Client
 Client json_getClientFromJson(char* json_string) {
@@ -176,4 +97,33 @@ Client json_getClientFromJson(char* json_string) {
     client.phoneNumber = phoneNumber;
 
     return client;
+}
+
+// Vehicle
+Vehicle json_getVehicleFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "number");
+    cJSON *model_item = cJSON_GetObjectItemCaseSensitive(root, "model");
+    cJSON *color_item = cJSON_GetObjectItemCaseSensitive(root, "color");
+
+    char* number = "";
+    char* model = "";
+    char* color = "";
+
+    if (cJSON_IsString(number_item)) {
+        number = number_item->valuestring;
+    }
+    if (cJSON_IsString(model_item)) {
+        model_item = model_item->valuestring;
+    }
+    if (cJSON_IsString(color_item)) {
+        color = color_item->valuestring;
+    }
+
+    Vehicle vehicle = initVehicle();
+    strcpy(vehicle.number, number);
+    strcpy(vehicle.model, model);
+    strcpy(vehicle.color, color);
+
+    return vehicle;
 }

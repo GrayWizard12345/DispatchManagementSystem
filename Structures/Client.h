@@ -35,7 +35,7 @@ struct Client {
 }clientInit() {
     printf("Client constructor called!\n");
 
-    Client* client = malloc(sizeof(Location));
+    Client* client = malloc(sizeof(Client));
     client->order.userId = -1;
 
     client->orderTaxi = client_orderTaxi;

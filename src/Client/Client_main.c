@@ -28,7 +28,7 @@ int main() {
     client = clientInit();
     client.setConnection(&client, c);
 
-//    char *json =
+    char *json = json_getJsonStringFromClient(client);
 
     // Connection successfull!
 
