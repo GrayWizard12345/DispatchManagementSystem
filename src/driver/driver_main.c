@@ -85,6 +85,6 @@ void notify(void *vargp){
 void startThreadForNotification(){
     pthread_t tid;
     printf("Before Thread\n");
-    //pthread_create(&tid, NULL, notify, NULL);
+    pthread_create(&tid, NULL, notify, NULL);
     //pthread_join(tid, NULL);
 }
