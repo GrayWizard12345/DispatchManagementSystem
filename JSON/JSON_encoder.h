@@ -10,3 +10,4 @@
 char* getAuthJSON(char* authMessage, int id, char* password) {
     sprintf(authMessage, "%d %d %s", AUTH, id, password);
 }
+

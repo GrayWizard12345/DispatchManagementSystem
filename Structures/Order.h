@@ -36,6 +36,13 @@ struct Order {
     return order1;
 };
 
+//TODO should be removed when the problem with JSON will be solved
+Order receivedOrderInit(int userID){
+    Order order;
+    order.userId = userID;
+    return order;
+}
+
 void order_setSource(Order* order, Location source) {
     Order* o = order;
     o->source = source;

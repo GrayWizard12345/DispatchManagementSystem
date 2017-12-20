@@ -12,6 +12,7 @@
 #include <netinet/in.h>
 #include <string.h>
 #include <arpa/inet.h>
+#include <pthread.h>
 
 #include "../../Structures/Connection.h"
 #include "../../Structures/Driver.h"
@@ -20,7 +21,6 @@
 #include "../../JSON/JSON_parser.h"
 #include "../../JSON/JSON_encoder.h"
 
-
 #include "../../utilities/string_splitting.h"
 
 Driver* driver;
@@ -28,6 +28,7 @@ char sendMessage[MAX_MESSAGE_SIZE];
 
 void startThreadForNotification();
 void printMessage(char*);
+void notify(void*);
 
 int main() {
     Connection c = connectToServer();
@@ -41,17 +42,16 @@ int main() {
 
     startThreadForNotification();
 
+    while (driver->isUp == 1){
 
-    //freeDriver(driver);
+    }
+
+    freeDriver(driver);
 
     return 0;
 }
 
-void printMessage(char* message){
-
-}
-
-void startThreadForNotification(){
+void notify(void *vargp){
     char recMessage[MAX_MESSAGE_SIZE];
     int argc;
     char ** argv;
@@ -70,9 +70,21 @@ void startThreadForNotification(){
 
         message_type = (int) strtol(argv[0], (char **)NULL, 10);
         if(message_type == ORDER_GET){
-            //parse order details from message
-            //init curentOrder field of driver
-            //show message to driver
+            //TODO change the initialization order to json parsing
+            //Order order = json_getOrderFromJson(recMessage);
+            Order order = receivedOrderInit(25);
+            setOrderAndChangeState(order, driver);
+            printOrderReceivedMessage(driver);
+        }else if(message_type == ORDER_CANCEL){
+            removeOrderAndChangeState(driver);
+            printOrderCancelMessage();
         }
     }
+}
+
+void startThreadForNotification(){
+    pthread_t tid;
+    printf("Before Thread\n");
+    pthread_create(&tid, NULL, notify, NULL);
+    //pthread_join(tid, NULL);
 }
