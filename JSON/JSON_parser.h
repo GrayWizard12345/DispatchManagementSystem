@@ -116,7 +116,6 @@ char* json_getJsonStringFromOrder(Order order) {
     cJSON_AddStringToObject(root, "clientPhoneNumber", order.clientPhoneNumber);
     cJSON_AddNumberToObject(root, "userId", order.userId);
     root = json_addTypeToJson(root, "Order");
-    root = json_addTypeToJson(root, "Order");
 
     return cJSON_Print(root);
 }
