@@ -36,6 +36,8 @@ struct Order {
     return order1;
 };
 
+
+
 //TODO should be removed when the problem with JSON will be solved
 Order receivedOrderInit(int userID){
     Order order;

@@ -72,8 +72,6 @@ void authDriver(Driver *driver) {
 void sendAuthMessage(Driver* driver){
     char *authMessage;
     memset(&authMessage, 0, sizeof(authMessage));
-    //TODO change to JSON encoder, not manually
-    //getAuthJSON(authMessage, driver->id, driver->password);
     authMessage = json_getJsonStringFromAuthData(driver->id, driver->password);
     puts(authMessage);
     send(driver->connection->socket, authMessage, strlen(authMessage), 0);
@@ -86,7 +84,7 @@ void receiveAuthMessage(Driver* driver){
     read(driver->connection->socket, authMessage, sizeof(authMessage));
     //TODO remove the message display
     printf("received: %s", authMessage);
-    Vehicle vehicle =
+    Vehicle vehicle = json_getVehicleFromJson(authMessage);
     //parse and get other fields of Driver
     //if wrong exit(0);
 }
