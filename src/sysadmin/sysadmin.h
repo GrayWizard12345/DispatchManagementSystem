@@ -2,8 +2,8 @@
 // Created by abdulbosid on 12/19/17.
 //
 
-#ifndef UNTITLED3_SYSADMIN_H
-#define UNTITLED3_SYSADMIN_H
+#ifndef SYSADMIN_H
+#define SYSADMIN_H
 
 #include <stdio.h>
 #include <stdlib.h>
@@ -43,7 +43,6 @@ int addNewDriver(int id, char *password)
     {
         fprintf(dbFile, "#%d %s\n", id, password);
     }
-    printf("Driver registered successfully!\n");
     fclose(dbFile);
     return 1;
 }
@@ -78,4 +77,6 @@ int checkDriver(int id)
     return 0;
 }
 
-#endif //UNTITLED3_SYSADMIN_H
+
+
+#endif //SYSADMIN_H
