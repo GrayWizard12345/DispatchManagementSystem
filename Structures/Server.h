@@ -39,10 +39,12 @@ struct Server {
     //Initializing the arrays
     for (int i = 0; i < MAX_CLIENTS; ++i) {
         server->clients[i] = malloc(sizeof(struct Client));
+        server->clients[i]->connection = malloc(sizeof(struct Connection));
     }
 
     for (int j = 0; j < MAX_DRIVERS; ++j) {
         server->drivers[j] = malloc(sizeof(struct Driver));
+        server->drivers[j]->connection = malloc(sizeof(struct Connection));
     }
 
     server->connection = malloc(sizeof(struct Connection));
@@ -142,8 +144,8 @@ void acceptConnections(Server server) {
 
         //Get the type of the connected guy
         //char* type = json_getTypeFromJson(initBuff);
-        int type = json_getTypeFromJson(initBuff);
-        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %s\n",initBuff, i, j, CLIENT, type);
+        int type = json_getUserTypeFromJson(initBuff);
+        printf("INITIAL BYTE SENT : %s\nVALUES OF ITERATORS : %d %d\nVALUE CHECKED: %d\nCONNECTION TYPE: %d\n",initBuff, i, j, CLIENT, type);
 
         if(type == CLIENT)
         {
@@ -155,7 +157,7 @@ void acceptConnections(Server server) {
             pthread_mutex_lock(&mutex);
             server.clients[i]->isUp = 1;
             server.clients[i]->id = i;
-            server.clients[i]->connection.socket = sock;
+            server.clients[i]->connection->socket = sock;
             pthread_mutex_unlock(&mutex);
 
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
@@ -239,12 +241,12 @@ void* startSession(void* params) {
                 memset(buffer, 0 , MAX_BUFFER);
 
                 int read_status;
-                if((read_status = read(client->connection.socket, buffer, MAX_BUFFER)) < 0)
+                if((read_status = read(client->connection->socket, buffer, MAX_BUFFER)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
                     perror(error);
-                    close(client->connection.socket);
+                    close(client->connection->socket);
                 } else if(read_status == 0)
                     break;
 
@@ -252,7 +254,6 @@ void* startSession(void* params) {
                 //Getting message type here, proper cast may be required later
                 message_t = json_getMessageType(buffer); //get message type form JSON
 
-                //send(client->connection.socket,buffer, strlen(buffer), 0);
                 printf("MESSAGE TYPE: %d", message_t);
                 //React to client message
                 switch (message_t)
@@ -298,12 +299,31 @@ void* startSession(void* params) {
 
                 printf("Driver_%d: %s" ,driver->id,buffer);
 
-                send(driver->connection->socket,buffer, MAX_BUFFER, 0);
-
+                char* jsonString = malloc(MAX_BUFFER);
                 switch (message_t)
                 {
                     case LOG_IN:
-                        id = json_getIdFromJson(buffer);
+                        driver->id = json_getIdFromJson(buffer);
+                        strcpy(driver->password, json_getPasswordFromJson(buffer));
+
+
+                        //if(driver is in my list of drivers)
+
+
+                        Vehicle vehicle = initVehicle();
+                        strcpy(vehicle.color, "RED");
+                        strcpy(vehicle.model, "VOLGA");
+                        strcpy(vehicle.number, "01AA777C");
+
+                        memset(jsonString, 0, MAX_BUFFER);
+                        jsonString = json_getJsonStringFromVehicle(vehicle);
+
+                        if (send(driver->connection->socket, jsonString, MAX_BUFFER, 0) < 0)
+                        {
+                            perror("FAILED TO SEND DATA");
+                            break;
+                        }
+
                         break;
 
                     case 2:
@@ -315,26 +335,27 @@ void* startSession(void* params) {
 
             }
            break; //End of case 1
-
+        case SYSADMIN:
+            //process his request
+            break;
         default:
             perror("UNKNOWN OBJ_TYPE");
-            exit(EXIT_FAILURE);
             break;
     }
     //Connection is finished here and we need to reclaim memory and reset variables:
     if(obj_type == CLIENT)
     {
-        close(client->connection.socket);
+        close(client->connection->socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
         pthread_mutex_lock(&mutex);
         client_is_active[client->id] = 0;
         clients_count--;
         pthread_mutex_unlock(&mutex);
         client->isUp = 0;
-        close(client->connection.socket);
+        close(client->connection->socket);
 
     }
-    else
+    else if(obj_type == DRIVER)
     {
         close(driver->connection->socket);
         printf("CONNECTION WITH DRIVER_%d is CLOSED", driver->id);

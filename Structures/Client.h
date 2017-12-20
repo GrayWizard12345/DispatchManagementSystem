@@ -13,12 +13,12 @@ void client_orderTaxi(void* client, Order order);
 void client_cancelOrder(void* client, Order order);
 void client_setOrder(void* client, Order order);
 void client_setPrivateInformation(void* client, char* name, char* phoneNumber);
-void client_setConnection(void* client, Connection connection);
+void client_setConnection(void* client, Connection* connection);
 bool client_orderExists(void* client);
 
 typedef struct Client Client;
 struct Client {
-    Connection connection;
+    Connection *connection;
     Order order;
     int id;
     int isUp;
@@ -56,7 +56,7 @@ void client_setPrivateInformation(void* client, char* name, char* phoneNumber) {
     c->phoneNumber = phoneNumber;
 }
 
-void client_setConnection(void* client, Connection connection) {
+void client_setConnection(void* client, Connection* connection) {
     Client *c = client;
     c->connection = connection;
 }
