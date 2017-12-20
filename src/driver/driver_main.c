@@ -53,14 +53,23 @@ void startThreadForNotification(){
     int argc;
     char ** argv;
 
+    MESSAGE_TYPE message_type;
+
     while(driver->isUp == 1){
         memset(recMessage, 0, sizeof(recMessage));
         read(driver->connection->socket, recMessage, sizeof(recMessage));
-        if (argc_argv (recMessage, & argc, & argv) != OK) {
+        if (argc_argv (recMessage, &argc, &argv) != OK) {
             fprintf (stderr, "Something went wrong.\n");
             exit (EXIT_FAILURE);
         }
         fflush(stdout);
-        printf("%s", argv[0]);
+        puts(argv[0]);
+
+        message_type = (int) strtol(argv[0], (char **)NULL, 10);
+        if(message_type == ORDER_GET){
+            //parse order details from message
+            //init curentOrder field of driver
+            //show message to driver
+        }
     }
 }

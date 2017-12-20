@@ -13,7 +13,7 @@ void printWaitingMessage() {
 
 void printWelcomeMessage(){
     printf("You have sucessfully logged in\n\n");
-    fflush(stdin);
+    fflush(stdout);
     sleep(1);
     system("clear");
     printf("\t\t---------------DISPATCH MANAGEMENT SYSTEM---------------\n");
