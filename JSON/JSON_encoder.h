@@ -36,6 +36,7 @@ char* json_getJsonStringForFirstMessage(USER_TYPE user_type) {
 
 // Type
 // Send by all objects connecting to the server, to tell the server their type
+//TODO should be int, not string
 char* json_getTypeFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
     cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "type");
@@ -58,6 +59,7 @@ cJSON* json_addTypeToJson(cJSON* root, char* type) {
 char* json_getJsonStringFromLocation(Location location) {
     cJSON* root;
     root = cJSON_CreateObject();
+    cJSON_AddStringToObject(root, "message_type", location.longitude);
     cJSON_AddNumberToObject(root, "longitude", location.longitude);
     cJSON_AddNumberToObject(root, "latitude", location.latitude);
     root = json_addTypeToJson(root, "Location");

@@ -21,7 +21,6 @@
 #include "../../View/DriverView.h"
 
 Driver* driver;
-char sendMessage[MAX_MESSAGE_SIZE];
 
 void startThreadForNotification();
 void startThreadForLocationUpdate();
