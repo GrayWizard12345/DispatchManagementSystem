@@ -76,7 +76,6 @@ void authDriver(Driver *driver) {
         getPassword(driver->password);
 
         sendAuthMessage(driver);
-        printf("Authentifaction\n");
         messageType = getMessageFromServer(driver);
         if(messageType == ACCESS_DENIED){
             printf("Try again, incorrect ID or password\n");
@@ -86,12 +85,11 @@ void authDriver(Driver *driver) {
 }
 
 int getMessageFromServer(Driver *driver) {
-    char* buffer;
-    memset(&buffer, 0, sizeof(buffer));
-    read(driver->connection->socket, buffer, sizeof(buffer));
-    printf(buffer);
-    int messageType = json_getMessageType(buffer);
-    free(buffer);
+    printf("Authentifaction\n");
+    char authMessage[MAX_MESSAGE_SIZE];
+    memset(authMessage, 0, sizeof(authMessage));
+    read(driver->connection->socket, authMessage, sizeof(authMessage));
+    int messageType = json_getMessageType(authMessage);
     return messageType;
 }
 
