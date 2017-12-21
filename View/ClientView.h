@@ -111,6 +111,28 @@ bool clientCancelOrderView(Client* client) {
     return check;
 }
 
+void clientOrderAcceptedView(Driver driver) {
+    printf("\n-- Your Order Accepted! --\n");
+    printf("\nYour taxi info:");
+    printf("\nCar model: \t", driver.vehicle.model);
+    printf("\nCar color: \t", driver.vehicle.color);
+    printf("\nCar number: \t", driver.vehicle.number);
+}
+
+int clientWaitingForDriverView() {
+    int choice = 0;
+    printf("\n-- Driver on the way --\n");
+    printf("\nPress 1 to cancel order\n");
+    while(choice != 1) {
+        scanf("%d", &choice);
+    }
+    return choice;
+}
+
+void clientDriverArrivedView() {
+    printf("\n-- Your Driver Arrived and Waiting to Pick You Up --\n");
+    printf("\nThanks for using our service!\n");
+}
 
 
 int clientMainMenuView(Client* client) {
