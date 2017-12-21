@@ -15,16 +15,17 @@
 
 #define nullptr NULL
 
-void client_orderTaxi(void* client, Order order);
+typedef struct Client Client;
+
+void client_orderTaxi(Client* client);
 void client_cancelOrder(void* client, Order order);
 void client_setOrder(void* client, Order order);
 void client_setPrivateInformation(void* client, char* name, char* phoneNumber);
-void client_setConnection(void* client, Connection* connection);
+void client_setConnection(Client* client, Connection* connection);
 bool client_orderExists(void* client);
 char* json_getJsonStringFromOrder(Order order);
-char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE message_type);
 
-typedef struct Client Client;
+char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE message_type);
 
 struct Client {
     Connection *connection;
@@ -34,11 +35,11 @@ struct Client {
     char* phoneNumber;
     char* name;
 
-    void (*orderTaxi)(void* client, Order order);
+    void (*orderTaxi)(Client* client);
     void (*cancelOrder)(void* client, Order order);
     void (*setOrder)(void* client, Order order);
     void (*setPrivateInformation)(void* client, char* name, char* phoneNumber);
-    void (*setConnection)(void* client, Connection* connection);
+    void (*setConnection)(Client* client, Connection* connection);
     bool (*orderExists)(void* client);
 
 }clientInit() {
@@ -53,11 +54,11 @@ struct Client {
     client->setPrivateInformation = client_setPrivateInformation;
     client->setConnection = client_setConnection;
     client->orderExists = client_orderExists;
-    memset(client->name, 0, 256);
-    memset(client->phoneNumber, 0, 256);
+    //memset(&(client->name), 0, 256);
+    //memset(&(client->phoneNumber), 0, 256);
 
-    struct Client client1 = *client;
-    free(client);
+    Client client1 = *client;
+
     return client1;
 };
 
@@ -74,9 +75,8 @@ void client_setPrivateInformation(void* client, char* name, char* phoneNumber) {
     c->phoneNumber = phoneNumber;
 }
 
-void client_setConnection(void* client, Connection* connection) {
-    Client *c = client;
-    c->connection = connection;
+void client_setConnection(Client* client, Connection* connection) {
+    client->connection = connection;
 }
 
 void client_setOrder(void* client, Order order) {
@@ -92,14 +92,15 @@ bool client_orderExists(void* client) {
     return (c->order.userId != -1);
 }
 
-void client_orderTaxi(void* client, Order order) {
-    Client* c = client;
-    if(c->orderExists) {
-        char* json = json_getJsonStringFromOrder(c->order);
+void client_orderTaxi(Client* client) {
+    if(client->orderExists) {
+        char* json = json_getJsonStringFromOrder(client->order);
 
-        if(send(c->connection->socket, json, sizeof(json), 0)< 0)
+        if(send(client->connection->socket, json, sizeof(json), 0)< 0)
         {
             perror("FAILED TO SEND ORDER TO SERVER");
+        } else {
+            puts("\nWaiting server to accept order\n");
         }
 }
 }

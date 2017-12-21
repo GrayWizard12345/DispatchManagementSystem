@@ -31,16 +31,6 @@ char* json_getJsonStringForFirstMessage(USER_TYPE user_type) {
     return cJSON_Print(root);
 }
 
-
-USER_TYPE json_getTypeFromJson(char* json_string) {
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "user_type");
-
-    USER_TYPE user_type = type_item->valueint;
-
-    return user_type;
-}
-
 cJSON* json_addTypeToJson(cJSON* root, char* type) {
     cJSON_AddStringToObject(root, "type", type);
     return root;

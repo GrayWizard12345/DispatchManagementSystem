@@ -26,6 +26,7 @@ int main() {
         return 0;
     }
     client = clientInit();
+    client.isUp = 1;
     client.setConnection(&client, &c);
     // Connection successfull if reached here!
 
@@ -34,8 +35,14 @@ int main() {
 
     // ---- UI starts here ---- //
     // Getting user credentials
-    clientEnterPersonalInfoView(&client);
+
     startClientThreadNotification();
+
+    clientEnterPersonalInfoView(&client);
+    clientEnterOrderDetailsView(&client);
+    client.orderTaxi(&client);
+
+    while (client.isUp == 1);
 
     return 0;
 }
@@ -57,13 +64,13 @@ void notify(){
 
     MESSAGE_TYPE message_type;
 
-    while(client.isUp){
+    while(true){
         memset(recMessage, 0, sizeof(recMessage));
-        int bytes = read(client.connection->socket, recMessage, sizeof(recMessage));
+        int bytes = (client.connection->socket, recMessage, sizeof(recMessage));
         fflush(stdout);
 
         if(bytes < 0) {
-            puts("\nIncorrect message type from server\n");
+            puts("\nIncorrreadect message type from server\n");
             break;
         } else {
             message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
@@ -77,5 +84,6 @@ void notify(){
 
     }
 
+    client.isUp = 0;
     pthread_join(notifThreadID, NULL);
 }

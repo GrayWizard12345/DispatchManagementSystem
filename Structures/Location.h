@@ -10,18 +10,17 @@
 
 #define pi 3.14159265358979323846
 
-double location_calculateDistanceTo(void *from, void *to);
-void location_setLongitude(void* location, double longitude);
-void location_setLatitude(void* location, double latitude);
-
 typedef struct Location Location;
+double location_calculateDistanceTo(Location *from, Location *to);
+void location_setLongitude(Location* location, double longitude);
+void location_setLatitude(Location* location, double latitude);
 
 struct Location {
     double latitude;
     double longitude;
-    double (*calculateDistanceTo)(void* from, void* to);
-    void (*setLongitude)(void* location, double longitude);
-    void (*setLatitude)(void* location, double latitude);
+    double (*calculateDistanceTo)(Location* from, Location* to);
+    void (*setLongitude)(Location* location, double longitude);
+    void (*setLatitude)(Location* location, double latitude);
 
 } locationInit() {
     printf("Location constructor called!\n");
@@ -30,7 +29,6 @@ struct Location {
     location->calculateDistanceTo = location_calculateDistanceTo;
 
     Location location1 = *location;
-    free(location);
     return location1;
 };
 
@@ -47,7 +45,7 @@ double rad2deg(double rad) {
     return (rad * 180 / pi);
 }
 
-double location_calculateDistanceTo(void *from, void *to) {
+double location_calculateDistanceTo(Location *from, Location *to) {
     Location *a = from;
     Location *b = to;
     double lat1 = a->latitude;
@@ -65,11 +63,9 @@ double location_calculateDistanceTo(void *from, void *to) {
 }
 // End of locations distance calculation
 
-void location_setLongitude(void* location, double longitude) {
-    Location * l = location;
-    l->longitude = longitude;
+void location_setLongitude(Location* location, double longitude) {
+    location->longitude = longitude;
 }
-void location_setLatitude(void* location, double latitude) {
-    Location * l = location;
-    l->longitude = latitude;
+void location_setLatitude(Location* location, double latitude) {
+    location->longitude = latitude;
 }

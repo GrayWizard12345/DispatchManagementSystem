@@ -28,18 +28,18 @@ void clientEnterOrderDetailsView(Client* client) {
     scanf("%lf", &lat2);
 
     Location location1 = locationInit();
-    location1.setLongitude(&location1, lon1);
-    location1.setLatitude(&location1, lat1);
+    location1.latitude = lat1;
+    location1.longitude = lon1;
 
     Location location2 = locationInit();
-    location2.setLongitude(&location2, lon1);
-    location2.setLatitude(&location2, lat1);
+    location2.longitude = lon2;
+    location2.latitude = lat2;
 
     Order order = orderInit();
-    order.setSource(&order, location1);
-    order.setDestination(&order, location2);
+    order.source = location1;
+    order.destination = location2;
 
-    client->setOrder(client, order);
+    client->order = order;
 }
 
 void orderLocationDetailsView(Order order) {
@@ -109,8 +109,8 @@ bool clientCancelOrderView(Client* client) {
 }
 
 void clientOrderAcceptedView(Driver driver) {
-    printf("\n-- Your Order Accepted! --\n");
-    printf("\nYour taxi info:");
+    puts("\n-- Your Order Accepted! --\n");
+    puts("\nYour taxi info:");
     printf("\nCar model: %s\t", driver.vehicle.model);
     printf("\nCar color: %s\t", driver.vehicle.color);
     printf("\nCar number: %s\t", driver.vehicle.number);
@@ -127,8 +127,8 @@ int clientWaitingForDriverView() {
 }
 
 void clientDriverArrivedView() {
-    printf("\n-- Your Driver Arrived and Waiting to Pick You Up --\n");
-    printf("\nThanks for using our service!\n");
+    puts("\n-- Your Driver Arrived and Waiting to Pick You Up --\n");
+    puts("\nThanks for using our service!\n");
 }
 
 

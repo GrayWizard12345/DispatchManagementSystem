@@ -32,7 +32,6 @@ struct Order {
     order->userId = -1;
 
     struct Order order1 = *order;
-    free(order);
     return order1;
 };
 
