@@ -70,12 +70,11 @@ void notify(){
         fflush(stdout);
 
         if(bytes < 0) {
-            puts("\nIncorrreadect message type from server\n");
+            puts("\nIncorrect message type from server\n");
             break;
         } else {
             message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
             if(message_type == ORDER_ACCEPTED){
-                printf("\nTEST%s\n", recMessage);
                 Vehicle vehicle = json_getVehicleFromJson(recMessage);
                 clientOrderAcceptedView(vehicle);
                 clientWaitingForDriverView();

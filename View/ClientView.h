@@ -13,18 +13,25 @@ void clientEnterOrderDetailsView(Client* client) {
     double lon1 = 0, lat1 = 0;
     double lon2 = 0, lat2 = 0;
 
-    printf("\n-- Enter Order Details --\n");
+    char phoneNumber[256];
+    char name[256];
 
-    printf("\nEnter source location: ");
-    printf("\nLongitude: \n");
+    strcpy(phoneNumber, client->phoneNumber);
+    strcpy(name, client->name);
+
+    puts("\n-- Enter Order Details --\n");
+
+    puts("\nEnter source location: ");
+    puts("\nLongitude: \n");
     scanf("%lf", &lon1);
-    printf("\nLatitude: \n");
+    puts("\nLatitude: \n");
     scanf("%lf", &lat1);
 
-    printf("\n\nEnter destination location: ");
-    printf("\nLongitude: \n");
+    puts("\n\nEnter destination location: ");
+    puts("\nLongitude: \n");
     scanf("%lf", &lon2);
-    printf("\nLatitude: \n");
+
+    puts("\nLatitude: \n");
     scanf("%lf", &lat2);
 
     Location location1 = locationInit();
@@ -36,10 +43,11 @@ void clientEnterOrderDetailsView(Client* client) {
     location2.latitude = lat2;
 
     Order order = orderInit();
+    order.userId = 0;
     order.source = location1;
     order.destination = location2;
-    order.clientName = client->name;
-    order.clientPhoneNumber = client->phoneNumber;
+    order.clientName = name;
+    order.clientPhoneNumber = phoneNumber;
 
     client->order = order;
 }

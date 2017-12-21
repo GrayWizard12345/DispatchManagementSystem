@@ -96,6 +96,8 @@ void client_orderTaxi(Client* client) {
     if(client->orderExists) {
         char* json = json_getJsonStringFromOrder(client->order);
 
+        printf("\nTEST%s\n", json);
+
         if(send(client->connection->socket, json, sizeof(json), 0)< 0)
         {
             perror("FAILED TO SEND ORDER TO SERVER");
