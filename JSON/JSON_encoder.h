@@ -103,7 +103,7 @@ cJSON* json_getJsonFromOrder(Order order) {
     cJSON_AddStringToObject(root, "clientName", order.clientName);
     cJSON_AddStringToObject(root, "clientPhoneNumber", order.clientPhoneNumber);
     cJSON_AddNumberToObject(root, "userId", order.userId);
-    root = json_addTypeToJson(root, "Order");
+    cJSON_AddNumberToObject(root, "type", ORDER_REQUEST);
 
     return root;
 }

@@ -29,7 +29,7 @@ struct Client {
     void (*cancelOrder)(void* client, Order order);
     void (*setOrder)(void* client, Order order);
     void (*setPrivateInformation)(void* client, char* name, char* phoneNumber);
-    void (*setConnection)(void* client, Connection connection);
+    void (*setConnection)(void* client, Connection* connection);
     bool (*orderExists)(void* client);
 
 }clientInit() {
@@ -49,6 +49,13 @@ struct Client {
     free(client);
     return client1;
 };
+
+void freeClient(Client* client) {
+    free(client->connection);
+    free(client->phoneNumber);
+    free(client->name);
+    free(client);
+}
 
 void client_setPrivateInformation(void* client, char* name, char* phoneNumber) {
     Client *c = client;

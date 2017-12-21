@@ -92,7 +92,7 @@ bool clientOrderTaxiView(Client* client) {
     if(check) {
         printf("\n-- Order In Progress --\n");
     } else {
-        printf("\nYou have no order!");
+        clientEnterOrderDetailsView(client);
     }
     return check;
 }
