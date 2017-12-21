@@ -13,6 +13,44 @@
 #include "../Structures/Structures.h"
 
 
+
+
+
+int json_getMessageType(char* json_string){
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "message_type");
+    int number = -1;
+    if(cJSON_IsNumber(number_item)) {
+        number = number_item->valuedouble;
+    }
+    return number;
+}
+
+int json_getStateFromJson(char* json_string)
+{
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "state");
+    int number = -1;
+    if(cJSON_IsNumber(number_item)) {
+        number = number_item->valuedouble;
+    }
+    return number;
+
+}
+
+USER_TYPE json_getTypeFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "user_type");
+
+    USER_TYPE user_type = -1;
+    if(cJSON_IsNumber(type_item)) {
+        user_type = type_item->valueint;
+    }
+
+    return user_type;
+}
+
+
 // Location
 Location json_getLocationFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
@@ -129,21 +167,6 @@ Client json_getClientFromJson(char* json_string) {
     client.phoneNumber = phoneNumber;
 
     return client;
-}
-
-
-int json_getMessageType(char* json_string){
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "message_type");
-    return number_item->valueint;
-}
-
-int json_getStateFromJson(char* json_string)
-{
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "state");
-    return number_item->valueint;
-
 }
 
 #endif

@@ -51,7 +51,7 @@ struct Server {
     DriverArray driverArray = getAllDrivers();
     server->drivers_count = (int) driverArray.used;
     for (int i = 0; i < driverArray.used; ++i) {
-        server->existingDrivers[i] = driverArray.array;
+        server->existingDrivers[i] = &driverArray.array[i];
         printf("%d.Driver id: %d\n  Vehicle number:%s\n  Vehical model: %s\n  Vehical color: %s\n", i, driverArray.array[i].id, driverArray.array[i].vehicle.number, driverArray.array[i].vehicle.model, driverArray.array[i].vehicle.color);
     }
     
@@ -207,16 +207,12 @@ void acceptConnections(Server server) {
             //driver_is_active[j] = (*server.drivers[j]).id;
             server.drivers[i]->isUp = 1;
             server.drivers[j]->connection->socket = sock;
-            server.drivers[j]->id = j;
+            server.drivers[j]->index = j;
             pthread_mutex_unlock(&mutex);
 
             printf("SERVER ACCEPTED NEW CONNECTION FROM A DRIVER ON PORT %d .....\n", DEFAULT_PORT);
 
             memset(initBuff, 0, MAX_BUFFER);
-            //Sending notification that message is accepted.
-            //initBuff = "Hello from Server\n";
-            //send(sock, initBuff, strlen(initBuff), 0);
-
 
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
 
@@ -271,7 +267,7 @@ void* startSession(void* params) {
                 memset(json_string_read, 0 , MAX_BUFFER);
 
                 int read_status;
-                if((read_status = read(client->connection->socket, json_string_read, MAX_BUFFER)) < 0)
+                if((read_status = recv(client->connection->socket, json_string_read, MAX_BUFFER,0)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
@@ -280,7 +276,8 @@ void* startSession(void* params) {
                 } else if(read_status == 0)
                     break;
 
-                printf("Client_%d: %s" ,client->id,json_string_read);
+                puts(json_string_read);
+               
                 //Getting message type here, proper cast may be required later
                 message_t = json_getMessageType(json_string_read); //get message type form JSON
 
@@ -384,42 +381,46 @@ void* startSession(void* params) {
                         strcpy(driver->password, json_getPasswordFromJson(json_string_read));
 
                         //Check if this driver exists in db
-                        int accessGranted = 1;
+                        int access_granted = 0;
+                        printf("\nPassword from socket: *%s*",driver->password);
                         for (int i = 0; i < server->drivers_count; ++i) {
-                            if (server->existingDrivers[i]->id != driver->id ||
-                                    strcmp(server->existingDrivers[i]->password,driver->password) != 0)
+                            server->existingDrivers[i]->password[strcspn(server->existingDrivers[i]->password, "\n")] = 0;
+                            printf("\nPasswords on server *%s*,  id = %d", server->existingDrivers[i]->password, server->existingDrivers[i]->id);
+                            if (server->existingDrivers[i]->id == driver->id)
                             {
-                                accessGranted = 0;
-                                char* access_denied_json = json_getJsonStringForSimpleMessage(SERVER, AUTH_SUCCESSFUL);
-                                if (send(driver->connection->socket, access_denied_json, sizeof(access_denied_json), 0) < 0)
+                                if (strcmp(server->existingDrivers[i]->password,driver->password) == 0)
                                 {
-                                    perror("FAILED TO SEND DATA");
+                                    access_granted = 1;
+                                    driver->vehicle = server->existingDrivers[i]->vehicle;
+                                    char* access_successful_json = json_getJsonStringForSimpleMessage(SERVER, AUTH_SUCCESSFUL);
+                                    if (send(driver->connection->socket, access_successful_json, MAX_BUFFER, 0) < 0)
+                                    {
+                                        perror("FAILED TO SEND DATA");
+                                        break;
+                                    }
+
+
+                                    //send driver car if driver exists in db
+
+                                    memset(jsonString, 0, MAX_BUFFER);
+                                    jsonString = json_getJsonStringFromVehicle(driver->vehicle);
+
+                                    if (send(driver->connection->socket, jsonString, MAX_BUFFER, 0) < 0)
+                                    {
+                                        perror("FAILED TO SEND DATA");
+                                        break;
+                                    }
                                     break;
                                 }
-                                break;
+
+
                             }
                         }
 
-                        if (accessGranted == 1)
+                        if(access_granted == 0)
                         {
-                            char* access_successful_json = json_getJsonStringForSimpleMessage(SERVER, AUTH_SUCCESSFUL);
-                            if (send(driver->connection->socket, access_successful_json, sizeof(access_successful_json), 0) < 0)
-                            {
-                                perror("FAILED TO SEND DATA");
-                                break;
-                            }
-
-
-                            //send driver car if driver exists in db
-                            Vehicle vehicle = initVehicle();
-                            strcpy(vehicle.color, "RED");
-                            strcpy(vehicle.model, "VOLGA");
-                            strcpy(vehicle.number, "01AA777C");
-
-                            memset(jsonString, 0, MAX_BUFFER);
-                            jsonString = json_getJsonStringFromVehicle(vehicle);
-
-                            if (send(driver->connection->socket, jsonString, MAX_BUFFER, 0) < 0)
+                            char* access_denied_json = json_getJsonStringForSimpleMessage(SERVER, ACCESS_DENIED);
+                            if (send(driver->connection->socket, access_denied_json, MAX_BUFFER, 0) < 0)
                             {
                                 perror("FAILED TO SEND DATA");
                                 break;
@@ -465,7 +466,7 @@ void* startSession(void* params) {
             break;
     }
     //Connection is finished here and we need to reclaim memory and reset variables:
-    if(obj_type == CLIENT)
+    /*if(obj_type == CLIENT)
     {
         close(client->connection->socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
@@ -474,7 +475,7 @@ void* startSession(void* params) {
         clients_count--;
         pthread_mutex_unlock(&mutex);
         client->isUp = 0;
-        close(client->connection->socket);
+        shutdown(client->connection->socket,2);
 
     }
     else if(obj_type == DRIVER)
@@ -482,12 +483,12 @@ void* startSession(void* params) {
         close(driver->connection->socket);
         printf("CONNECTION WITH DRIVER_%d is CLOSED", driver->id);
         pthread_mutex_lock(&mutex);
-        driver_is_active[driver->id] = 0;
+        driver_is_active[driver->index] = 0;
         drivers_count--;
         pthread_mutex_unlock(&mutex);
         driver->isUp = 0;
-        close(driver->connection->socket);
-    }
+        shutdown(driver->connection->socket,2);
+    }*/
 }
 
 

@@ -31,16 +31,6 @@ char* json_getJsonStringForFirstMessage(USER_TYPE user_type) {
     return cJSON_Print(root);
 }
 
-
-USER_TYPE json_getTypeFromJson(char* json_string) {
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *type_item = cJSON_GetObjectItemCaseSensitive(root, "user_type");
-
-    USER_TYPE user_type = type_item->valueint;
-
-    return user_type;
-}
-
 cJSON* json_addTypeToJson(cJSON* root, char* type) {
     cJSON_AddStringToObject(root, "type", type);
     return root;
@@ -70,19 +60,31 @@ cJSON* json_getJsonFromLocation(Location location) {
 
 // Order
 char* json_getJsonStringFromOrder(Order order) {
+
+    char name[256];
+    char phoneNumber[256];
+    strcpy(name, order.clientName);
+    strcpy(phoneNumber, order.clientPhoneNumber);
+    name[strcspn(name, "\n")] = 0;
+    phoneNumber[strcspn(phoneNumber, "\n")] = 0;
     cJSON* root;
     cJSON* srcLoc;
     cJSON* destLoc;
-    srcLoc = json_getJsonFromLocation(order.source);
-    destLoc = json_getJsonFromLocation(order.destination);
+
     root = cJSON_CreateObject();
 
-    cJSON_AddItemToObject(root, "source", srcLoc);
-    cJSON_AddItemToObject(root, "destination", destLoc);
+
+
     cJSON_AddStringToObject(root, "clientName", order.clientName);
     cJSON_AddStringToObject(root, "clientPhoneNumber", order.clientPhoneNumber);
     cJSON_AddNumberToObject(root, "userId", order.userId);
+
+    srcLoc = json_getJsonFromLocation(order.source);
+    destLoc = json_getJsonFromLocation(order.destination);
+    cJSON_AddItemToObject(root, "source", srcLoc);
+    cJSON_AddItemToObject(root, "destination", destLoc);
     root = json_addTypeToJson(root, "Order");
+    cJSON_AddNumberToObject(root, "message_type", ORDER_GET);
 
     return (char*)cJSON_Print(root);
 }
@@ -169,5 +171,7 @@ char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE messa
     cJSON_AddNumberToObject(root, "message_type", message_type);
     cJSON_AddNumberToObject(root, "user_type", user_type);
 
-    return cJSON_Print(root);
+    char* res =  cJSON_Print(root);
+    puts(res);
+    return res;
 }

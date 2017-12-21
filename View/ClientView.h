@@ -13,33 +13,43 @@ void clientEnterOrderDetailsView(Client* client) {
     double lon1 = 0, lat1 = 0;
     double lon2 = 0, lat2 = 0;
 
-    printf("\n-- Enter Order Details --\n");
+    char phoneNumber[256];
+    char name[256];
 
-    printf("\nEnter source location: ");
-    printf("\nLongitude: \n");
+    strcpy(phoneNumber, client->phoneNumber);
+    strcpy(name, client->name);
+
+    puts("\n-- Enter Order Details --\n");
+
+    puts("\nEnter source location: ");
+    puts("\nLongitude: \n");
     scanf("%lf", &lon1);
-    printf("\nLatitude: \n");
+    puts("\nLatitude: \n");
     scanf("%lf", &lat1);
 
-    printf("\n\nEnter destination location: ");
-    printf("\nLongitude: \n");
+    puts("\n\nEnter destination location: ");
+    puts("\nLongitude: \n");
     scanf("%lf", &lon2);
-    printf("\nLatitude: \n");
+
+    puts("\nLatitude: \n");
     scanf("%lf", &lat2);
 
     Location location1 = locationInit();
-    location1.setLongitude(&location1, lon1);
-    location1.setLatitude(&location1, lat1);
+    location1.latitude = lat1;
+    location1.longitude = lon1;
 
     Location location2 = locationInit();
-    location2.setLongitude(&location2, lon1);
-    location2.setLatitude(&location2, lat1);
+    location2.longitude = lon2;
+    location2.latitude = lat2;
 
     Order order = orderInit();
-    order.setSource(&order, location1);
-    order.setDestination(&order, location2);
+    order.userId = 0;
+    order.source = location1;
+    order.destination = location2;
+    order.clientName = name;
+    order.clientPhoneNumber = phoneNumber;
 
-    client->setOrder(client, order);
+    client->order = order;
 }
 
 void orderLocationDetailsView(Order order) {
@@ -78,7 +88,9 @@ void clientEnterPersonalInfoView(Client* client) {
     printf("Enter phone number: ");
     fgets(phoneNumber, sizeof(phoneNumber), stdin);
 
-    client->setPrivateInformation(client, name, phoneNumber);
+    client->phoneNumber = phoneNumber;
+    client->name = name;
+
 }
 
 void clientPrintPersonalInfoView(Client client) {
@@ -108,27 +120,22 @@ bool clientCancelOrderView(Client* client) {
     return check;
 }
 
-void clientOrderAcceptedView(Driver driver) {
-    printf("\n-- Your Order Accepted! --\n");
-    printf("\nYour taxi info:");
-    printf("\nCar model: %s\t", driver.vehicle.model);
-    printf("\nCar color: %s\t", driver.vehicle.color);
-    printf("\nCar number: %s\t", driver.vehicle.number);
+void clientOrderAcceptedView(Vehicle vehicle) {
+    puts("\n-- Your Order Accepted! --\n");
+    puts("\nYour taxi info:");
+    printf("\nCar model: %s\t", vehicle.model);
+    printf("\nCar color: %s\t", vehicle.color);
+    printf("\nCar number: %s\t", vehicle.number);
 }
 
 int clientWaitingForDriverView() {
     int choice = 0;
-    printf("\n-- Driver on the way --\n");
-    printf("\nPress 1 to cancel order\n");
-    while(choice != 1) {
-        scanf("%d", &choice);
-    }
-    return choice;
+    puts("\n-- Driver on the way --\n");
 }
 
 void clientDriverArrivedView() {
-    printf("\n-- Your Driver Arrived and Waiting to Pick You Up --\n");
-    printf("\nThanks for using our service!\n");
+    puts("\n-- Your Driver Arrived and Waiting to Pick You Up --\n");
+    puts("\nThanks for using our service!\n");
 }
 
 

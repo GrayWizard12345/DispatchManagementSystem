@@ -33,6 +33,23 @@ void insertDriverArray(DriverArray *a, Driver element) {
     a->array[a->used++] = element;
 }
 
+void deleteDriverArray(DriverArray *a, int index) {
+    // a->used is the number of used entries, because a->array[a->used++] updates a->used only *after* the array has been accessed.
+    // Therefore a->used can go up to a->size
+    if (index >= 0 && index < a->used) {
+        a->used--;
+        while (index < a->used - 1)
+        {
+            a->array[index].id = a->array[index + 1].id;
+            strcpy(a->array[index].password, a->array[index + 1].password);
+            strcpy(a->array[index].vehicle.number, a->array[index + 1].vehicle.number);
+            strcpy(a->array[index].vehicle.model, a->array[index + 1].vehicle.model);
+            strcpy(a->array[index].vehicle.color, a->array[index + 1].vehicle.color);
+            index++;
+        }
+    }
+}
+
 void freeDriverArray(DriverArray *a) {
     free(a->array);
     a->array = NULL;
