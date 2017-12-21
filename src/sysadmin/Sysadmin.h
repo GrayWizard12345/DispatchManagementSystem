@@ -79,6 +79,21 @@ int checkDriver(int id)
     return 0;
 }
 
+int rewriteAllDrivers(DriverArray *driverArray)
+{
+    FILE *dbFileRewrite = fopen(dbPath, "w+");
+    if (dbFileRewrite == NULL)
+    {
+        return 0;
+    }
+
+    for (int i = 0; i < (*driverArray).used; ++i) {
+        fprintf(dbFileRewrite, "#%d\t%s\t%s\t%s\t%s\n", (*driverArray).array[i].id, (*driverArray).array[i].password, (*driverArray).array[i].vehicle.number, (*driverArray).array[i].vehicle.model, (*driverArray).array[i].vehicle.color); // The longest line of my code haha
+    }
+    fclose(dbFileRewrite);
+    return 1;
+}
+
 DriverArray getAllDrivers()
 {
     DriverArray driverArray;
