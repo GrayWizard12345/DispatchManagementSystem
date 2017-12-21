@@ -136,3 +136,11 @@ int json_getMessageType(char* json_string){
     cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "message_type");
     return number_item->valueint;
 }
+
+STATE json_getStateFromJson(char* json_string)
+{
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "state");
+    return number_item->valueint;
+
+}

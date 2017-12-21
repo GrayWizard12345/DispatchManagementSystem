@@ -6,7 +6,12 @@
 
 #include "../Structures/Connection.h"
 #include "Order.h"
+#include "../JSON/JSON_encoder.h"
+#include "../global_var/enums.h"
 #include <stdbool.h>
+#include <../JSON/JSON_encoder.h>
+#include <../JSON/JSON_parser.h>
+#include <../JSON/cJSON.h>
 #define nullptr NULL
 
 void client_orderTaxi(void* client, Order order);
@@ -84,17 +89,25 @@ bool client_orderExists(void* client) {
 void client_orderTaxi(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
-        /*
-         * -- Server code --
-         * Order a taxi.
-         * Register order in a server
-        */
+        char* json = json_getJsonStringFromOrder(c->order);
+
+        if(send(c->connection->socket, json, sizeof(json), 0)< 0)
+        {
+            perror("FAILED TO SEND ORDER TO SERVER");
+        }
 }
 }
 
 void client_cancelOrder(void* client, Order order) {
     Client* c = client;
     if(c->orderExists) {
+       char* json = json_getJsonStringForSimpleMessage(CLIENT, ORDER_CANCEL);
+        if(send(c->connection->socket, json, sizeof(json), 0)< 0)
+        {
+            perror("FAILED TO SEND ORDER TO SERVER");
+        }
+        c->order = NULL;
+        c->orderExists = 0;
         /*
          * -- Server code --
          * Cancel order and notify server about it

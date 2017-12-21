@@ -179,10 +179,6 @@ void acceptConnections(Server server) {
             //Code can be optimized, as the same function is called in else branch
             memset(initBuff, 0, MAX_BUFFER);
 
-            //Sending notification that message is accepted.
-            //initBuff = "GOT YOUR MESSAGE BRO!";
-            //send(sock, initBuff, strlen(initBuff), 0);
-
             //Thread parameters
             struct Session_params* session_params = malloc(sizeof(struct Session_params));
 
@@ -283,13 +279,58 @@ void* startSession(void* params) {
 
                 printf("MESSAGE TYPE: %d", message_t);
                 //React to client message
+                char *json_to_send;
                 switch (message_t)
                 {
-                    case 1:
-                        //int id = json_get
+                    case ORDER_GET:
+                        client->order = json_getOrderFromJson(json_string_read);
+                        client->orderExists = 1;
+
+                        Driver* free_drivers[MAX_DRIVERS];
+                        int free_drivers_count = 0;
+                        for (int j = 0; j < MAX_DRIVERS; ++j) {
+                            free_drivers[j] = malloc(sizeof(Driver));
+                        }
+
+                        for (int i = 0, j = 0; i < server->drivers_count; ++i) {
+                            if (server->drivers[i]->state == FREE)
+                            {
+                                free_drivers[j++] = server->drivers[i];
+                                free_drivers_count++;
+                            }
+                        }
+
+                        double minimal_dist[2] = {location_calculateDistanceTo(&free_drivers[0]->location,
+                                                                           &client->order.destination), 0};
+                        double temp_dist;
+                        for (int i = 1; i < free_drivers_count; ++i) {
+                            if(minimal_dist[0] > (temp_dist = location_calculateDistanceTo(&free_drivers[i]->location,
+                                                                 &client->order.destination)))
+                            {
+                                minimal_dist[0] = temp_dist;
+                                minimal_dist[1] = i;
+                            }
+                        }
+
+                        if(send(client->connection->socket,
+                             json_to_send = json_getJsonStringFromVehicle(server->drivers[(int)minimal_dist[1]]->vehicle), sizeof(json_to_send),0) < 0)
+                        {
+                            perror("FAILED TO SEND ORDER TO DRIVER");
+                        }
+
+
                         break;
 
-                    case 2:
+                    case ORDER_CANCEL:
+                        client->order = NULL;
+                        client->orderExists = 0;
+
+                        if(send(server->drivers[(int)minimal_dist[1]]->connection->socket,
+                                json_to_send = json_getJsonStringForSimpleMessage(SERVER, ORDER_CANCEL), sizeof(json_to_send),0) < 0)
+                        {
+                            perror("FAILED TO SEND ORDER TO DRIVER");
+                        }
+
                         break;
 
                     default:
@@ -339,7 +380,7 @@ void* startSession(void* params) {
 
                         //Check if this driver exists in db
                         int accessGranted = 1;
-                        for (int i = 0; i < MAX_DRIVERS; ++i) {
+                        for (int i = 0; i < server->drivers_count; ++i) {
                             if (server->existingDrivers[i]->id != driver->id ||
                                     strcmp(server->existingDrivers[i]->password,driver->password) != 0)
                             {
@@ -388,8 +429,23 @@ void* startSession(void* params) {
                         driver->location = json_getLocationFromJson(json_string_read);
 
 
-                        break;
+                        break; //end of location change
+                    case STATE_CHANGE:
 
+                        driver->state = json_getStateFromJson(json_string_read);
+                        switch (driver->state)
+                        {
+                            //FREE, DRIVE_TO_SOURCE, WAITING_CLIENT, PICKED_UP
+                            case WAITING_CLIENT:
+                                //TODO notify client here
+
+                                break;
+                            case FREE:
+                                break;
+                        }
+
+
+                        break; //end of change state
                     default:
                         break;
                 }
