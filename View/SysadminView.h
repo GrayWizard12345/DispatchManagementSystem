@@ -31,6 +31,7 @@ static int myGetLine (char *prmpt, char *buff, size_t sz);
 void sysadminView()
 {
     int choice = 0;
+    printf("\n");
     printf("********       System administration        ********\n");
     printf("*                                                  *\n");
     printf("*    1.Add new DRIVER                              *\n");
@@ -54,6 +55,7 @@ void sysadminView()
                 system("@cls||clear");
                 allDriversView();
                 printf("Press any key to close...\n");
+                fflush(stdout);
                 getchar();
                 getchar();
                 system("@cls||clear");
@@ -135,7 +137,7 @@ void editDriverView(int choice, char chPass, char chVeh)
 
     if (choice == 0)
     {
-        printf("Choose driver: ");
+        printf("Choose driver to edit: ");
         scanf("%d", &choice);
         choice--; // choice value is greater to 1 then its index in the array
     }
@@ -227,7 +229,47 @@ void editDriverView(int choice, char chPass, char chVeh)
 
 void deleteDriverView()
 {
-    //TODO: deleteDriverView?
+    DriverArray driverArray = getAllDrivers();
+    char ch;
+    int choice = 0;
+    allDriversView();// displaying with ordered numbers
+
+    printf("Choose driver to delete: ");
+    scanf("%d", &choice);
+    choice--; // choice value is greater to 1 then its index in the array
+
+    if(choice >= 0 && choice < driverArray.used)//validation
+    {
+        printf("-----------------------------------------------\n");
+        printf("   Deleting the driver with id: %d\n", driverArray.array[choice].id);
+        fflush(stdout);
+        printf("Do you want to delete? (y/n): ");
+        getchar();
+        scanf("%c", &ch);
+        getchar();
+        if (ch == 'y')
+        {
+            deleteDriverArray(&driverArray, choice);
+
+            if(0 == rewriteAllDrivers(&driverArray))
+            {
+                system("@cls||clear");
+                printf("\n\tError accessing database file!\n");
+                printf("-----------------------------------------------\n\n");
+                return deleteDriverView();
+            }
+            system("@cls||clear");
+            printf("\n\tEdits are saved!\n");
+            printf("-----------------------------------------------\n\n");
+
+        }
+
+    } else //input is not valid
+    {
+        system("@cls||clear");
+        printf("---     Invalid input     ---\n");
+        return deleteDriverView();
+    }
 }
 
 void allDriversView()
