@@ -23,7 +23,7 @@ struct Location {
     void (*setLatitude)(Location* location, double latitude);
 
 } locationInit() {
-    printf("Location constructor called!\n");
+    //printf("Location constructor called!\n");
 
     Location* location = malloc(sizeof(Location));
     location->calculateDistanceTo = location_calculateDistanceTo;

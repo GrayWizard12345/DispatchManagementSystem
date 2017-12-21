@@ -43,7 +43,7 @@ struct Client {
     bool (*orderExists)(void* client);
 
 }clientInit() {
-    printf("Client constructor called!\n");
+    //printf("Client constructor called!\n");
 
     struct Client* client = malloc(sizeof(Client));
     client->order.userId = -1;

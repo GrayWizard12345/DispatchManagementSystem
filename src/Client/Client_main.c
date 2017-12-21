@@ -75,10 +75,12 @@ void notify(){
         } else {
             message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
             if(message_type == ORDER_ACCEPTED){
-                Order order = json_getOrderFromJson(recMessage);
-                // Order accepted, do smth
+                printf("\nTEST%s\n", recMessage);
+                Vehicle vehicle = json_getVehicleFromJson(recMessage);
+                clientOrderAcceptedView(vehicle);
+                clientWaitingForDriverView();
             }else if(message_type == DRIVER_ARRIVED){
-                // Driver arrived, do smth
+                clientDriverArrivedView();
             }
         }
 

@@ -25,7 +25,7 @@ struct Order {
     void (*setDestination)(void* order, Location destination);
 
 } orderInit() {
-    printf("Order's constructor invoked");
+    //printf("Order's constructor invoked");
     struct Order* order = malloc(sizeof(Order));
 
     // -1 indicates, that order Currently does not belong to any user

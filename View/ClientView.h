@@ -38,6 +38,8 @@ void clientEnterOrderDetailsView(Client* client) {
     Order order = orderInit();
     order.source = location1;
     order.destination = location2;
+    order.clientName = client->name;
+    order.clientPhoneNumber = client->phoneNumber;
 
     client->order = order;
 }
@@ -78,7 +80,9 @@ void clientEnterPersonalInfoView(Client* client) {
     printf("Enter phone number: ");
     fgets(phoneNumber, sizeof(phoneNumber), stdin);
 
-    client->setPrivateInformation(client, name, phoneNumber);
+    client->phoneNumber = phoneNumber;
+    client->name = name;
+
 }
 
 void clientPrintPersonalInfoView(Client client) {
@@ -108,22 +112,17 @@ bool clientCancelOrderView(Client* client) {
     return check;
 }
 
-void clientOrderAcceptedView(Driver driver) {
+void clientOrderAcceptedView(Vehicle vehicle) {
     puts("\n-- Your Order Accepted! --\n");
     puts("\nYour taxi info:");
-    printf("\nCar model: %s\t", driver.vehicle.model);
-    printf("\nCar color: %s\t", driver.vehicle.color);
-    printf("\nCar number: %s\t", driver.vehicle.number);
+    printf("\nCar model: %s\t", vehicle.model);
+    printf("\nCar color: %s\t", vehicle.color);
+    printf("\nCar number: %s\t", vehicle.number);
 }
 
 int clientWaitingForDriverView() {
     int choice = 0;
-    printf("\n-- Driver on the way --\n");
-    printf("\nPress 1 to cancel order\n");
-    while(choice != 1) {
-        scanf("%d", &choice);
-    }
-    return choice;
+    puts("\n-- Driver on the way --\n");
 }
 
 void clientDriverArrivedView() {
