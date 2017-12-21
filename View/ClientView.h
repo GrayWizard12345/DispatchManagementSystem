@@ -69,19 +69,15 @@ void clientOrderDetailsView(Client client) {
 
 void clientEnterPersonalInfoView(Client* client) {
     printf("\n-- Please Enter Your Personal Data --\n");
-    char* phoneNumber;
-    char* name;
-    memset(&phoneNumber, 0, sizeof(phoneNumber));
-    memset(&name, 0, sizeof(name));
+    char phoneNumber[256];
+    char name[256];
 
     printf("Enter your name: ");
-    scanf("%s", name);
+    fgets(name, sizeof(name), stdin);
     printf("Enter phone number: ");
-    scanf("%s", phoneNumber);
+    fgets(phoneNumber, sizeof(phoneNumber), stdin);
 
     client->setPrivateInformation(client, name, phoneNumber);
-    free(phoneNumber);
-    free(name);
 }
 
 void clientPrintPersonalInfoView(Client client) {
