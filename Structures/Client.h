@@ -98,7 +98,7 @@ void client_orderTaxi(Client* client) {
 
         printf("\nTEST%s\n", json);
 
-        if(send(client->connection->socket, json, sizeof(json), 0)< 0)
+        if(send(client->connection->socket, json, MAX_BUFFER, 0)< 0)
         {
             perror("FAILED TO SEND ORDER TO SERVER");
         } else {

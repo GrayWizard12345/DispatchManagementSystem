@@ -253,7 +253,7 @@ void* startSession(void* params) {
     Server *server = session_params->server;
 
     int message_t;
-    char* json_string_read;
+    char json_string_read[MAX_BUFFER];
 
     Client* client;
     Driver* driver;
@@ -267,7 +267,7 @@ void* startSession(void* params) {
                 memset(json_string_read, 0 , MAX_BUFFER);
 
                 int read_status;
-                if((read_status = read(client->connection->socket, json_string_read, MAX_BUFFER)) < 0)
+                if((read_status = recv(client->connection->socket, json_string_read, MAX_BUFFER,0)) < 0)
                 {
                     char* error = malloc(MAX_BUFFER);
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
@@ -277,6 +277,7 @@ void* startSession(void* params) {
                     break;
 
                 puts(json_string_read);
+               
                 //Getting message type here, proper cast may be required later
                 message_t = json_getMessageType(json_string_read); //get message type form JSON
 
