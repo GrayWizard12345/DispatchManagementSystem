@@ -62,6 +62,35 @@ Order json_getOrderFromJson(char* json_string) {
     return order;
 }
 
+// Vehicle
+Vehicle json_getVehicleFromJson(char* json_string) {
+    cJSON *root = cJSON_Parse(json_string);
+    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "number");
+    cJSON *model_item = cJSON_GetObjectItemCaseSensitive(root, "model");
+    cJSON *color_item = cJSON_GetObjectItemCaseSensitive(root, "color");
+
+    char* number = "";
+    char* model = "";
+    char* color = "";
+
+    if (cJSON_IsString(number_item)) {
+        number = number_item->valuestring;
+    }
+    if (cJSON_IsString(model_item)) {
+        model = model_item->valuestring;
+    }
+    if (cJSON_IsString(color_item)) {
+        color = color_item->valuestring;
+    }
+
+    Vehicle vehicle = initVehicle();
+    strcpy(vehicle.number, number);
+    strcpy(vehicle.model, model);
+    strcpy(vehicle.color, color);
+
+    return vehicle;
+}
+
 // Client
 Client json_getClientFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
@@ -101,34 +130,6 @@ Client json_getClientFromJson(char* json_string) {
     return client;
 }
 
-// Vehicle
-Vehicle json_getVehicleFromJson(char* json_string) {
-    cJSON *root = cJSON_Parse(json_string);
-    cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "number");
-    cJSON *model_item = cJSON_GetObjectItemCaseSensitive(root, "model");
-    cJSON *color_item = cJSON_GetObjectItemCaseSensitive(root, "color");
-
-    char* number = "";
-    char* model = "";
-    char* color = "";
-
-    if (cJSON_IsString(number_item)) {
-        number = number_item->valuestring;
-    }
-    if (cJSON_IsString(model_item)) {
-        model = model_item->valuestring;
-    }
-    if (cJSON_IsString(color_item)) {
-        color = color_item->valuestring;
-    }
-
-    Vehicle vehicle = initVehicle();
-    strcpy(vehicle.number, number);
-    strcpy(vehicle.model, model);
-    strcpy(vehicle.color, color);
-
-    return vehicle;
-}
 
 int json_getMessageType(char* json_string){
     cJSON *root = cJSON_Parse(json_string);

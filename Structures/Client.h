@@ -52,8 +52,8 @@ struct Client {
 
 void freeClient(Client* client) {
     free(client->connection);
-    free(client->phoneNumber);
-    free(client->name);
+//    free(client->phoneNumber);
+//    free(client->name);
     free(client);
 }
 
