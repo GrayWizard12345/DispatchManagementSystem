@@ -114,9 +114,9 @@ bool clientCancelOrderView(Client* client) {
 void clientOrderAcceptedView(Driver driver) {
     printf("\n-- Your Order Accepted! --\n");
     printf("\nYour taxi info:");
-    printf("\nCar model: \t", driver.vehicle.model);
-    printf("\nCar color: \t", driver.vehicle.color);
-    printf("\nCar number: \t", driver.vehicle.number);
+    printf("\nCar model: %s\t", driver.vehicle.model);
+    printf("\nCar color: %s\t", driver.vehicle.color);
+    printf("\nCar number: %s\t", driver.vehicle.number);
 }
 
 int clientWaitingForDriverView() {
