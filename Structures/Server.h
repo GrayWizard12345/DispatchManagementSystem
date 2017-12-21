@@ -266,7 +266,6 @@ void* startSession(void* params) {
             client = session_params->obj;
             while (client->isUp == 1)
             {
-                memset(json_string_read, 0 , MAX_BUFFER);
 
                 int read_status;
                 if((read_status = recv(client->connection->socket, json_string_read, MAX_BUFFER,0)) < 0)

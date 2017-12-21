@@ -18,7 +18,7 @@
 typedef struct Client Client;
 
 void client_orderTaxi(Client* client);
-void client_cancelOrder(void* client, Order order);
+void client_cancelOrder(Client* client);
 void client_setOrder(void* client, Order order);
 void client_setPrivateInformation(void* client, char* name, char* phoneNumber);
 void client_setConnection(Client* client, Connection* connection);
@@ -36,7 +36,7 @@ struct Client {
     char* name;
 
     void (*orderTaxi)(Client* client);
-    void (*cancelOrder)(void* client, Order order);
+    void (*cancelOrder)(Client* client);
     void (*setOrder)(void* client, Order order);
     void (*setPrivateInformation)(void* client, char* name, char* phoneNumber);
     void (*setConnection)(Client* client, Connection* connection);
@@ -96,8 +96,6 @@ void client_orderTaxi(Client* client) {
     if(client->orderExists) {
         char* json = json_getJsonStringFromOrder(client->order);
 
-        printf("\nTEST%s\n", json);
-
         if(send(client->connection->socket, json, MAX_BUFFER, 0)< 0)
         {
             perror("FAILED TO SEND ORDER TO SERVER");
@@ -107,7 +105,7 @@ void client_orderTaxi(Client* client) {
 }
 }
 
-void client_cancelOrder(void* client, Order order) {
+void client_cancelOrder(Client* client) {
     Client* c = client;
     if(c->orderExists) {
        char* json = json_getJsonStringForSimpleMessage(CLIENT, ORDER_CANCEL);
@@ -117,18 +115,7 @@ void client_cancelOrder(void* client, Order order) {
         }
         c->order.userId  = -1;
         c->orderExists = 0;
-        /*
-         * -- Server code --
-         * Cancel order and notify server about it
-         */
-/*c->order = nullptr;
-} else {
-/*
- * Order does not exist.
- * Notify user
- */
+    }
 }
-}
-
 
 #endif

@@ -77,9 +77,15 @@ void notify(){
         } else {
             message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
             if(message_type == ORDER_ACCEPTED){
+                int orderCancelled = 0;
                 Vehicle vehicle = json_getVehicleFromJson(recMessage);
                 clientOrderAcceptedView(vehicle);
-                clientWaitingForDriverView();
+                orderCancelled = clientWaitingForDriverView();
+                if(orderCancelled == 1) {
+                    client.cancelOrder;
+                    clientOrderCancelledView();
+                    break;
+                }
             }else if(message_type == DRIVER_ARRIVED){
                 clientDriverArrivedView();
             }
