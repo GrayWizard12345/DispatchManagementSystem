@@ -253,7 +253,7 @@ void* startSession(void* params) {
     Server *server = session_params->server;
 
     int message_t;
-    char json_string_read[MAX_BUFFER];
+    char* json_string_read;
 
     Client* client;
     Driver* driver;
@@ -276,7 +276,7 @@ void* startSession(void* params) {
                 } else if(read_status == 0)
                     break;
 
-                printf("Client_%d: %s" ,client->id,json_string_read);
+                puts(json_string_read);
                 //Getting message type here, proper cast may be required later
                 message_t = json_getMessageType(json_string_read); //get message type form JSON
 
@@ -465,7 +465,7 @@ void* startSession(void* params) {
             break;
     }
     //Connection is finished here and we need to reclaim memory and reset variables:
-    if(obj_type == CLIENT)
+    /*if(obj_type == CLIENT)
     {
         close(client->connection->socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
@@ -487,7 +487,7 @@ void* startSession(void* params) {
         pthread_mutex_unlock(&mutex);
         driver->isUp = 0;
         shutdown(driver->connection->socket,2);
-    }
+    }*/
 }
 
 
