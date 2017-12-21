@@ -6,6 +6,7 @@
 
 #include <stdio.h>
 #include "../Structures/Client.h"
+#include "../Structures/Driver.h"
 #include <stdbool.h>
 
 void clientEnterOrderDetailsView(Client* client) {

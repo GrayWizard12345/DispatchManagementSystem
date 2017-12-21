@@ -12,6 +12,7 @@
 
 #include "../Structures/Structures.h"
 
+
 // Location
 Location json_getLocationFromJson(char* json_string) {
     cJSON *root = cJSON_Parse(json_string);
@@ -137,7 +138,7 @@ int json_getMessageType(char* json_string){
     return number_item->valueint;
 }
 
-STATE json_getStateFromJson(char* json_string)
+int json_getStateFromJson(char* json_string)
 {
     cJSON *root = cJSON_Parse(json_string);
     cJSON *number_item = cJSON_GetObjectItemCaseSensitive(root, "state");

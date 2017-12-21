@@ -9,8 +9,6 @@
 #include "../Structures/Structures.h"
 
 
-
-
 // AuthData
 char* json_getJsonStringFromLoginData(int id, char *password) {
     cJSON *root;

@@ -24,6 +24,9 @@
 #include "../src/sysadmin/Sysadmin.h"
 #include "../Structures/DriverArray.h"
 
+Order json_getOrderFromJson(char*);
+Location json_getLocationFromJson(char*);
+
 typedef struct Server Server;
 struct Server {
 

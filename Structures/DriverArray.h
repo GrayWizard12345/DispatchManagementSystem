@@ -8,8 +8,10 @@
 #include <glob.h>
 #include <stdlib.h>
 #include "Driver.h"
+#include "Structures.h"
 
-typedef struct {
+
+typedef struct DriverArray {
     Driver *array;
     size_t used;
     size_t size;

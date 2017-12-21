@@ -7,6 +7,7 @@
 #include <signal.h>
 #include<unistd.h>
 #include "../../Structures/Structures.h"
+#include "../../Structures/Server.h"
 
 
 struct Server server;

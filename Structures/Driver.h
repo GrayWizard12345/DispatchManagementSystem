@@ -9,19 +9,13 @@
 #include <sys/socket.h>
 
 
-#include "Connection.h"
-#include "Location.h"
-#include "Vehicle.h"
-#include "Order.h"
-#include "../JSON/JSON_encoder.h"
-#include "../JSON/JSON_parser.h"
-#include "../global_var/global_var.h"
-#include "../global_var/enums.h"
+#include "Structures.h"
 
 #ifndef DRIVER_HEADER
 #define DRIVER_HEADER
 
-
+Vehicle json_getVehicleFromJson(authMessage);
+char* json_getJsonStringFromLoginData(int, char*);
 typedef struct Driver Driver;
 
 int getID();
