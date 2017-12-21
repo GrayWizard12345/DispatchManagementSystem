@@ -4,14 +4,15 @@
 
 #pragma once
 
-#include "../Structures/Connection.h"
+#ifndef CLIENT_HEADER
+#define CLIENT_HEADER
+
+
+#include "../Structures/Structures.h"
 #include "Order.h"
-#include "../JSON/JSON_encoder.h"
-#include "../global_var/enums.h"
 #include <stdbool.h>
-#include <../JSON/JSON_encoder.h>
-#include <../JSON/JSON_parser.h>
-#include <../JSON/cJSON.h>
+
+
 #define nullptr NULL
 
 void client_orderTaxi(void* client, Order order);
@@ -20,8 +21,11 @@ void client_setOrder(void* client, Order order);
 void client_setPrivateInformation(void* client, char* name, char* phoneNumber);
 void client_setConnection(void* client, Connection* connection);
 bool client_orderExists(void* client);
+char* json_getJsonStringFromOrder(Order order);
+char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE message_type);
 
 typedef struct Client Client;
+
 struct Client {
     Connection *connection;
     Order order;
@@ -40,7 +44,7 @@ struct Client {
 }clientInit() {
     printf("Client constructor called!\n");
 
-    Client* client = malloc(sizeof(Client));
+    struct Client* client = malloc(sizeof(Client));
     client->order.userId = -1;
 
     client->orderTaxi = client_orderTaxi;
@@ -50,7 +54,7 @@ struct Client {
     client->setConnection = client_setConnection;
     client->orderExists = client_orderExists;
 
-    Client client1 = *client;
+    struct Client client1 = *client;
     free(client);
     return client1;
 };
@@ -106,7 +110,7 @@ void client_cancelOrder(void* client, Order order) {
         {
             perror("FAILED TO SEND ORDER TO SERVER");
         }
-        c->order = NULL;
+        c->order.userId  = -1;
         c->orderExists = 0;
         /*
          * -- Server code --
@@ -120,3 +124,6 @@ void client_cancelOrder(void* client, Order order) {
  */
 }
 }
+
+
+#endif

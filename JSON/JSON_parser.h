@@ -3,14 +3,14 @@
 //
 
 #pragma once
+#ifndef JSON_PARSER_HEADER
+#define JSON_PARSER_HEADER
+
 #include <stdio.h>
 #include <stdlib.h>
 #include "cJSON.h"
-#include "../Structures/Client.h"
-#include "../Structures/Location.h"
-#include "../Structures/Order.h"
-#include "../Structures/Driver.h"
-#include "../Structures/Vehicle.h"
+
+#include "../Structures/Structures.h"
 
 // Location
 Location json_getLocationFromJson(char* json_string) {
@@ -144,3 +144,5 @@ STATE json_getStateFromJson(char* json_string)
     return number_item->valueint;
 
 }
+
+#endif

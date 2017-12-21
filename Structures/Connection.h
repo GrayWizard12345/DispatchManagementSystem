@@ -4,6 +4,10 @@
 
 #pragma once
 
+#ifndef CONNECTION_HEADER
+#define CONNECTION_HEADER
+
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -63,3 +67,5 @@ Connection connectToServer() {
     c.address = serv_addr;
     return c;
 }
+
+#endif

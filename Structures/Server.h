@@ -4,6 +4,10 @@
 
 #pragma once
 
+#ifndef SERVER_HEADER
+#define SERVER_HEADER
+
+
 #include <sys/socket.h>
 #include <sys/types.h>
 #include <sys/stat.h>
@@ -284,7 +288,6 @@ void* startSession(void* params) {
                 {
                     case ORDER_GET:
                         client->order = json_getOrderFromJson(json_string_read);
-                        client->orderExists = 1;
 
                         Driver* free_drivers[MAX_DRIVERS];
                         int free_drivers_count = 0;
@@ -322,8 +325,7 @@ void* startSession(void* params) {
                         break;
 
                     case ORDER_CANCEL:
-                        client->order = NULL;
-                        client->orderExists = 0;
+                        client->order.userId = -1;
 
                         if(send(server->drivers[(int)minimal_dist[1]]->connection->socket,
                                 json_to_send = json_getJsonStringForSimpleMessage(SERVER, ORDER_CANCEL), sizeof(json_to_send),0) < 0)
@@ -484,3 +486,6 @@ void* startSession(void* params) {
         close(driver->connection->socket);
     }
 }
+
+
+#endif

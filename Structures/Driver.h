@@ -18,6 +18,10 @@
 #include "../global_var/global_var.h"
 #include "../global_var/enums.h"
 
+#ifndef DRIVER_HEADER
+#define DRIVER_HEADER
+
+
 typedef struct Driver Driver;
 
 int getID();
@@ -171,3 +175,5 @@ void notifyOnArrivalDestination(Driver *driver){
     driver->state = FREE;
     sendMessage(driver);
 }
+
+#endif

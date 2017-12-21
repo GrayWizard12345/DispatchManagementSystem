@@ -6,10 +6,9 @@
 #include <stdlib.h>
 #include "cJSON.h"
 #include "../Structures/Client.h"
-#include "../Structures/Location.h"
-#include "../Structures/Order.h"
-#include "../Structures/Driver.h"
-#include "../global_var/enums.h"
+#include "../Structures/Structures.h"
+
+
 
 
 // AuthData
@@ -87,7 +86,7 @@ char* json_getJsonStringFromOrder(Order order) {
     cJSON_AddNumberToObject(root, "userId", order.userId);
     root = json_addTypeToJson(root, "Order");
 
-    return cJSON_Print(root);
+    return (char*)cJSON_Print(root);
 }
 
 cJSON* json_getJsonFromOrder(Order order) {
