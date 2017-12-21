@@ -34,6 +34,7 @@ struct Driver {
     int isUp;
     int id;
     char password[INPUT_STRING_LENGTH];
+    int index;
 };
 
 Driver* initDriver(Connection *conn) {
@@ -134,7 +135,7 @@ int getID() {
 void getPassword(char *password) {
     getchar();
     printf("Write your password ");
-    fgets(password, sizeof(password), stdin);
+    fgets(password, INPUT_STRING_LENGTH, stdin);
     password[strcspn(password, "\n")] = 0;
 }
 

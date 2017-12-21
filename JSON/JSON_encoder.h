@@ -159,5 +159,7 @@ char* json_getJsonStringForSimpleMessage(USER_TYPE user_type, MESSAGE_TYPE messa
     cJSON_AddNumberToObject(root, "message_type", message_type);
     cJSON_AddNumberToObject(root, "user_type", user_type);
 
-    return cJSON_Print(root);
+    char* res =  cJSON_Print(root);
+    puts(res);
+    return res;
 }
