@@ -53,6 +53,8 @@ struct Client {
     client->setPrivateInformation = client_setPrivateInformation;
     client->setConnection = client_setConnection;
     client->orderExists = client_orderExists;
+    memset(client->name, 0, 256);
+    memset(client->phoneNumber, 0, 256);
 
     struct Client client1 = *client;
     free(client);
