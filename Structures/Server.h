@@ -205,7 +205,7 @@ void acceptConnections(Server server) {
             pthread_mutex_lock(&mutex);
             driver_is_active[j] = 1;
             //driver_is_active[j] = (*server.drivers[j]).id;
-            server.drivers[i]->isUp = 1;
+            server.drivers[j]->isUp = 1;
             server.drivers[j]->connection->socket = sock;
             server.drivers[j]->index = j;
             pthread_mutex_unlock(&mutex);
@@ -366,9 +366,6 @@ void* startSession(void* params) {
 
                 //Getting message type from Json
                 message_t = json_getMessageType(json_string_read); //get message type form JSON
-
-                printf("Driver_%d: %s" ,driver->id,json_string_read);
-
                 char* jsonString = malloc(MAX_BUFFER);
 
                 //json_string_read contains json already
@@ -382,10 +379,8 @@ void* startSession(void* params) {
 
                         //Check if this driver exists in db
                         int access_granted = 0;
-                        printf("\nPassword from socket: *%s*",driver->password);
                         for (int i = 0; i < server->drivers_count; ++i) {
                             server->existingDrivers[i]->password[strcspn(server->existingDrivers[i]->password, "\n")] = 0;
-                            printf("\nPasswords on server *%s*,  id = %d", server->existingDrivers[i]->password, server->existingDrivers[i]->id);
                             if (server->existingDrivers[i]->id == driver->id)
                             {
                                 if (strcmp(server->existingDrivers[i]->password,driver->password) == 0)
