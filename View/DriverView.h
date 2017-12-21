@@ -9,7 +9,7 @@
 void printWaitingMessage() {
     printf("\n\tOperator will assign an order to you soon\n");
     printf("\n\tWaiting for the order\n");
-    printf("\n\n-------------------------------------------------------------\n");
+    printf("\n\n-------------------------------------------------------------------------\n");
 }
 
 void printWelcomeMessage(){
@@ -32,7 +32,7 @@ void printOrderReceivedMessage(Driver* driver) {
     //TODO can remove after the problem with JSON is fixed
     printf("\tUser ID: %d", driver->currentOrder.userId);
 
-    printf("\n\n-------------------------------------------------------------\n");
+    printf("\n\n-------------------------------------------------------------------------\n");
 }
 
 void printOrderCancelMessage() {
@@ -40,26 +40,24 @@ void printOrderCancelMessage() {
     printWaitingMessage();
 }
 
-int getInputOnArrival(Driver *driver){
-    printf("Write 1 when you arrive to the client");
+void getInputOnArrival(Driver *driver){
+    puts("Write 1 when you arrive to the client");
     int choice = 0;
     while (choice != 1 && driver->isUp == 1)
         scanf("%d", &choice);
-
-    return choice;
 }
 
 void getInputOnPickedUp(){
-    printf("Write 1 when you pick up the client");
+    puts("Write 1 when you pick up the client");
     int choice = 0;
-    while (choice != 0)
+    while (choice != 1)
         scanf("%d", &choice);
 }
 
 void getInputOnArrivalDestination(){
-    printf("Write 1 when you arrive to the destination");
+    puts("Write 1 when you arrive to the destination");
     int choice = 0;
-    while (choice != 0)
+    while (choice != 1)
         scanf("%d", &choice);
 }
 

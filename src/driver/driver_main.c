@@ -37,14 +37,15 @@ int main() {
     startThreadForNotification();
     startThreadForLocationUpdate();
 
-    int choice;
     while (driver->isUp == 1){
         printWaitingMessage();
         //wait until the driver gets order
-        while (hasOder(driver) == -1);
-        choice = getInputOnArrival(driver);
-        if(choice != 1)
+        while (driver->state == FREE);
+        getInputOnArrival(driver);
+        if(driver->state == FREE){
+            puts("Order was cancelled");
             continue;
+        }
 
         notifyOnArrivalAndChangeState(driver);
         getInputOnPickedUp();

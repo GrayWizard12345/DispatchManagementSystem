@@ -150,7 +150,7 @@ void sendMessage(Driver *driver){
     char *mess;
     memset(&mess, 0, sizeof(mess));
     mess = json_getStateChangeMess(driver->state);
-    puts(mess);
+    //puts(mess);
     send(driver->connection->socket, mess, strlen(mess), 0);
     free(mess);
 }

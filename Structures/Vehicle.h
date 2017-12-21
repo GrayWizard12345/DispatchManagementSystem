@@ -13,7 +13,6 @@ struct Vehicle {
     char model[MAX_BUFFER];
     char color[MAX_BUFFER];
 } initVehicle() {
-    printf("Vehicle constructor called!\n");
 
     Vehicle* vehicle = malloc(sizeof(Vehicle));
 
