@@ -179,6 +179,7 @@ void acceptConnections(Server server) {
             server.clients[i]->isUp = 1;
             server.clients[i]->id = i;
             server.clients[i]->connection->socket = sock;
+            clients_count++;
             pthread_mutex_unlock(&mutex);
 
             printf("SERVER ACCEPTED NEW CONNECTION FROM A CLIENT ON PORT %d .....\n", DEFAULT_PORT);
@@ -208,6 +209,7 @@ void acceptConnections(Server server) {
             server.drivers[j]->isUp = 1;
             server.drivers[j]->connection->socket = sock;
             server.drivers[j]->index = j;
+            drivers_count++;
             pthread_mutex_unlock(&mutex);
 
             printf("SERVER ACCEPTED NEW CONNECTION FROM A DRIVER ON PORT %d .....\n", DEFAULT_PORT);
@@ -273,6 +275,7 @@ void* startSession(void* params) {
                     sprintf(error, "CONNECTION WITH CLIENT_%d IS LOST\n", client->id);
                     perror(error);
                     close(client->connection->socket);
+                    break;
                 } else if(read_status == 0)
                     break;
 
@@ -295,7 +298,7 @@ void* startSession(void* params) {
                             free_drivers[j] = malloc(sizeof(Driver));
                         }
 
-                        for (int i = 0, j = 0; i < server->drivers_count; ++i) {
+                        for (int i = 0, j = 0; i < drivers_count; ++i) {
                             if (server->drivers[i]->state == FREE)
                             {
                                 free_drivers[j++] = server->drivers[i];
@@ -303,8 +306,10 @@ void* startSession(void* params) {
                             }
                         }
 
-                        double minimal_dist[2] = {location_calculateDistanceTo(&free_drivers[0]->location,
-                                                                           &client->order.destination), 0};
+                        double minimal_dist[2];
+                        minimal_dist[0] = location_calculateDistanceTo(&free_drivers[0]->location,&client->order.destination);
+
+                        minimal_dist[1]  = 0;
                         double temp_dist;
                         for (int i = 1; i < free_drivers_count; ++i) {
                             if(minimal_dist[0] > (temp_dist = location_calculateDistanceTo(&free_drivers[i]->location,
@@ -316,10 +321,11 @@ void* startSession(void* params) {
                         }
 
                         if(send(client->connection->socket,
-                             json_to_send = json_getJsonStringFromVehicle(server->drivers[(int)minimal_dist[1]]->vehicle), sizeof(json_to_send),0) < 0)
+                             json_to_send = json_getJsonStringFromVehicle(server->drivers[(int)minimal_dist[1]]->vehicle), MAX_BUFFER,0) < 0)
                         {
                             perror("FAILED TO SEND ORDER TO DRIVER");
                         }
+                        puts(json_to_send);
 
 
                         break;
@@ -461,7 +467,7 @@ void* startSession(void* params) {
             break;
     }
     //Connection is finished here and we need to reclaim memory and reset variables:
-    /*if(obj_type == CLIENT)
+    if(obj_type == CLIENT)
     {
         close(client->connection->socket);
         printf("CONNECTION WITH CLIENT_%d is CLOSED", client->id);
@@ -483,7 +489,7 @@ void* startSession(void* params) {
         pthread_mutex_unlock(&mutex);
         driver->isUp = 0;
         shutdown(driver->connection->socket,2);
-    }*/
+    }
 }
 
 

@@ -42,7 +42,8 @@ int main() {
     clientEnterOrderDetailsView(&client);
     client.orderTaxi(&client);
 
-    while (client.isUp == 1);
+    //while (client.isUp == 1);   //This shit is suspicious
+    pthread_join(notifThreadID, NULL);
 
     return 0;
 }
@@ -65,8 +66,9 @@ void notify(){
     MESSAGE_TYPE message_type;
 
     while(true){
-        memset(recMessage, 0, sizeof(recMessage));
-        int bytes = (client.connection->socket, recMessage, sizeof(recMessage));
+        memset(recMessage, 0, MAX_MESSAGE_SIZE);
+        int bytes = read(client.connection->socket, recMessage, MAX_BUFFER);
+        puts(recMessage);
         fflush(stdout);
 
         if(bytes < 0) {

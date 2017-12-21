@@ -131,6 +131,7 @@ char* json_getJsonStringFromVehicle(Vehicle vehicle) {
     cJSON_AddStringToObject(root, "color", vehicle.color );
     cJSON_AddStringToObject(root, "model", vehicle.model);
     root = json_addTypeToJson(root, "Vehicle");
+    cJSON_AddNumberToObject(root, "message_type", ORDER_ACCEPTED);
 
     return cJSON_Print(root);
 }
