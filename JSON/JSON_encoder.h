@@ -65,7 +65,7 @@ char* json_getJsonStringFromOrder(Order order) {
     char phoneNumber[256];
     strcpy(name, order.clientName);
     strcpy(phoneNumber, order.clientPhoneNumber);
-    number[strcspn(number, "\n")] = 0;
+    name[strcspn(name, "\n")] = 0;
     phoneNumber[strcspn(phoneNumber, "\n")] = 0;
     cJSON* root;
     cJSON* srcLoc;
