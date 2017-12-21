@@ -84,6 +84,7 @@ char* json_getJsonStringFromOrder(Order order) {
     cJSON_AddItemToObject(root, "source", srcLoc);
     cJSON_AddItemToObject(root, "destination", destLoc);
     root = json_addTypeToJson(root, "Order");
+    cJSON_AddNumberToObject(root, "message_type", ORDER_GET);
 
     return (char*)cJSON_Print(root);
 }
