@@ -113,12 +113,17 @@ bool clientOrderTaxiView(Client* client) {
 bool clientCancelOrderView(Client* client) {
     bool check = client->orderExists;
     if(check) {
-        printf("\n-- Cancelling in progress --\n");
+        puts("\n-- Cancelling in progress --\n");
     } else {
-        printf("\nYou have no order to cancel!");
+        puts("\nYou have no order to cancel!");
     }
     return check;
 }
+
+void clientOrderCancelledView() {
+    puts("\n-- Order Has Been Cancelled --\n");
+}
+
 
 void clientOrderAcceptedView(Vehicle vehicle) {
     puts("\n-- Your Order Accepted! --\n");
@@ -131,6 +136,9 @@ void clientOrderAcceptedView(Vehicle vehicle) {
 int clientWaitingForDriverView() {
     int choice = 0;
     puts("\n-- Driver on the way --\n");
+    puts("Press 1 to cancel the order\n");
+    scanf("%d", &choice);
+    return choice;
 }
 
 void clientDriverArrivedView() {

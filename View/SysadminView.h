@@ -246,7 +246,6 @@ void deleteDriverView()
         printf("Do you want to delete? (y/n): ");
         getchar();
         scanf("%c", &ch);
-        getchar();
         if (ch == 'y')
         {
             deleteDriverArray(&driverArray, choice);
