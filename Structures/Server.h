@@ -65,6 +65,7 @@ struct Server {
     for (int j = 0; j < MAX_DRIVERS; ++j) {
         server->drivers[j] = malloc(sizeof(struct Driver));
         server->drivers[j]->connection = malloc(sizeof(struct Connection));
+        server->drivers[j]->state = DRIVER_OFFLINE;
     }
 
     server->connection = malloc(sizeof(struct Connection));
@@ -128,6 +129,7 @@ void driverConnectionThread(void*);
 
 
 void acceptConnections(Server server) {
+
     while (clients_count <= MAX_DRIVERS + MAX_CLIENTS)  //Almost equivalent to while (true)
     {
         int i = -1;
@@ -140,7 +142,7 @@ void acceptConnections(Server server) {
         pthread_mutex_unlock(&mutex);
 
         //Wait for a connection and accept it
-        int addrlen = sizeof(server.connection->address);
+        socklen_t addrlen = sizeof(server.connection->address);
         if((sock = accept(server.connection->socket,
                           (struct sockaddr*)&server.connection->address,
                           (socklen_t*)&addrlen)) < 0)   //Don't pay attention to the error here, it is not an error!!
@@ -209,6 +211,7 @@ void acceptConnections(Server server) {
             server.drivers[j]->isUp = 1;
             server.drivers[j]->connection->socket = sock;
             server.drivers[j]->index = j;
+            server.drivers[j]->state = FREE;
             drivers_count++;
             pthread_mutex_unlock(&mutex);
 
@@ -235,8 +238,8 @@ void acceptConnections(Server server) {
             session_params->obj_type = SYSADMIN;
             session_params->server = &server;
             pthread_mutex_unlock(&mutex);
-            pthread_t pid;
-            pthread_create(&pid, NULL, startSession, session_params);
+
+            pthread_create(&driver_threads[j], NULL, startSession, session_params);
 
         } else
         {
@@ -249,7 +252,6 @@ void acceptConnections(Server server) {
 
 void* startSession(void* params) {
 
-    //Getting parameters... Hope this gonna work...
     struct Session_params* session_params = params;
     int obj_type = session_params->obj_type;
     Server *server = session_params->server;
@@ -280,65 +282,88 @@ void* startSession(void* params) {
                     break;
 
                 puts(json_string_read);
-               
-                //Getting message type here, proper cast may be required later
+
                 message_t = json_getMessageType(json_string_read); //get message type form JSON
 
                 printf("MESSAGE TYPE: %d", message_t);
                 //React to client message
-                char *json_to_send;
+                char *json_to_send = malloc(MAX_BUFFER);
                 switch (message_t)
                 {
                     case ORDER_GET:
                         client->order = json_getOrderFromJson(json_string_read);
 
-                        Driver* free_drivers[MAX_DRIVERS];
-                        int free_drivers_count = 0;
-                        for (int j = 0; j < MAX_DRIVERS; ++j) {
-                            free_drivers[j] = malloc(sizeof(Driver));
-                        }
-
-                        for (int i = 0, j = 0; i < drivers_count; ++i) {
+                        double minimal_dist[2];
+                    l1: minimal_dist[0] = 0;
+                        minimal_dist[1]  = 0;
+                        int first_is_initialized = 0;
+                        double temp_dist;
+                        for (int i = 0; i < drivers_count; ++i) {
+                            if(first_is_initialized == 0)
+                            {
+                                if (server->drivers[i]->state == FREE)
+                                {
+                                    minimal_dist[0] = location_calculateDistanceTo(&server->drivers[i]->location, &client->order.destination);
+                                    first_is_initialized = 1;
+                                    minimal_dist[1] = i;
+                                }
+                            } else
                             if (server->drivers[i]->state == FREE)
                             {
-                                free_drivers[j++] = server->drivers[i];
-                                free_drivers_count++;
+                                temp_dist = location_calculateDistanceTo(&server->drivers[i]->location,
+                                                                         &client->order.destination);
+                                if(minimal_dist[0] > temp_dist)
+                                {
+                                    minimal_dist[0] = temp_dist;
+                                    minimal_dist[1] = i;
+                                }
                             }
                         }
-
-                        double minimal_dist[2];
-                        minimal_dist[0] = location_calculateDistanceTo(&free_drivers[0]->location,&client->order.destination);
-
-                        minimal_dist[1]  = 0;
-                        double temp_dist;
-                        for (int i = 1; i < free_drivers_count; ++i) {
-                            if(minimal_dist[0] > (temp_dist = location_calculateDistanceTo(&free_drivers[i]->location,
-                                                                 &client->order.destination)))
-                            {
-                                minimal_dist[0] = temp_dist;
-                                minimal_dist[1] = i;
-                            }
-                        }
-
-                        if(send(client->connection->socket,
-                             json_to_send = json_getJsonStringFromVehicle(server->drivers[(int)minimal_dist[1]]->vehicle), MAX_BUFFER,0) < 0)
+                        if(first_is_initialized == 0)
                         {
-                            perror("FAILED TO SEND ORDER TO DRIVER");
+                            printf("\n\nNo drivers are available for client #%d, please wait...\n\n", client->id);
+                            sleep(10);
+                            goto l1;
+                        }
+                        json_to_send = json_getJsonStringFromVehicle(server->drivers[(int)minimal_dist[1]]->vehicle);
+                        if(send(client->connection->socket,
+                             json_to_send, strlen(json_to_send),0) < 0)
+                        {
+                            perror("FAILED TO SEND Vehicle TO CLIENT");
                         }
                         puts(json_to_send);
 
+                        client->order.userId = (int)minimal_dist[1];
+
+                        //memset(json_to_send, 0, MAX_BUFFER);
+                        char* json_to_send2 = malloc(MAX_BUFFER);
+                        memset(json_to_send2, 0, MAX_BUFFER);
+                        json_to_send2 = json_getJsonStringFromOrder(client->order);
+
+
+                        //Dont mess with buffer size, send must have strle(buffer), not MAX_buffer
+                        if(send(server->drivers[(int)minimal_dist[1]]->connection->socket, json_to_send2, strlen(json_to_send2),0) < 0)
+                        {
+                            perror("FAILED TO SEND ORDER TO DRIVER");
+                        }
+                        puts(json_to_send2);
+
+                        pthread_mutex_lock(&mutex);
+                        server->drivers[(int)minimal_dist[1]]->state = DRIVE_TO_SOURCE;
+                        server->drivers[(int)minimal_dist[1]]->currentOrder = client->order;
+                        server->drivers[(int)minimal_dist[1]]->state = DRIVE_TO_SOURCE;
+                        pthread_mutex_unlock(&mutex);
 
                         break;
 
                     case ORDER_CANCEL:
-                        client->order.userId = -1;
 
-                        if(send(server->drivers[(int)minimal_dist[1]]->connection->socket,
+                        if(send(server->drivers[client->order.userId]->connection->socket,
                                 json_to_send = json_getJsonStringForSimpleMessage(SERVER, ORDER_CANCEL), sizeof(json_to_send),0) < 0)
                         {
                             perror("FAILED TO SEND ORDER TO DRIVER");
                         }
-
+                        client->order.userId = -1;
                         break;
 
                     default:
@@ -444,7 +469,18 @@ void* startSession(void* params) {
                         {
                             //FREE, DRIVE_TO_SOURCE, WAITING_CLIENT, PICKED_UP
                             case WAITING_CLIENT:
-                                //TODO notify client here
+                            {
+
+                                char* json_to_send = malloc(MAX_BUFFER);
+                                memset(json_to_send, 0, MAX_BUFFER);
+                                json_to_send = json_getJsonStringForSimpleMessage(SERVER, DRIVER_ARRIVED);
+
+                                if (send(server->clients[driver->currentOrder.userId]->connection->socket, json_to_send, strlen(json_to_send), 0) < 0)
+                                {
+                                    perror("FAILED TO SEND DATA");
+                                    break;
+                                }
+                            }
 
                                 break;
                             case FREE:
