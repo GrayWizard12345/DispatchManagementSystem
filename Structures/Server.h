@@ -469,10 +469,10 @@ void* startSession(void* params) {
                             //FREE, DRIVE_TO_SOURCE, WAITING_CLIENT, PICKED_UP
                             case WAITING_CLIENT:
                             {
-
                                 char* json_to_send = malloc(MAX_BUFFER);
                                 memset(json_to_send, 0, MAX_BUFFER);
                                 json_to_send = json_getJsonStringForSimpleMessage(SERVER, DRIVER_ARRIVED);
+                                puts(json_to_send);
 
                                 if (send(server->clients[driver->currentOrder.userId]->connection->socket, json_to_send, strlen(json_to_send), 0) < 0)
                                 {

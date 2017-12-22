@@ -67,7 +67,7 @@ void notify(){
 
     while(true){
         memset(recMessage, 0, MAX_MESSAGE_SIZE);
-        int bytes = read(client.connection->socket, recMessage, MAX_BUFFER);
+        int bytes = read(client.connection->socket, recMessage, MAX_MESSAGE_SIZE);
         puts(recMessage);
         fflush(stdout);
 
@@ -75,7 +75,8 @@ void notify(){
             puts("\nIncorrect message type from server\n");
             break;
         } else {
-            message_type = (MESSAGE_TYPE) json_getMessageType(recMessage);
+            message_type = json_getMessageType(recMessage);
+            printf("message typoe: %d", message_type);
             if(message_type == ORDER_ACCEPTED){
                 int orderCancelled = 0;
                 Vehicle vehicle = json_getVehicleFromJson(recMessage);
