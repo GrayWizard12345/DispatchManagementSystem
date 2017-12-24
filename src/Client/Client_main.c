@@ -17,6 +17,8 @@ void notify(void*);
 void startClientThreadNotification();
 void sendFirstMessage(Client client);
 
+int isDriverCame = 0;
+
 int main() {
 
     // Connecting to the server
@@ -45,10 +47,12 @@ int main() {
     while (client.order.userId == -1);
 
     int orderCancelled = clientWaitingForDriverView();
-    if(orderCancelled == 1) {
+    if(orderCancelled == 1 && isDriverCame == 0) {
         client.cancelOrder;
         clientOrderCancelledView();
         client.isUp = 0;
+    }else if(orderCancelled == 0 && isDriverCame == 1){
+        puts("Driver already came to the source");
     }
 
     //while (client.isUp == 1);   //This shit is suspicious
@@ -93,6 +97,7 @@ void notify(void *var){
                 Vehicle vehicle = json_getVehicleFromJson(recMessage);
                 clientOrderAcceptedView(vehicle);
             }else if(message_type == DRIVER_ARRIVED){
+                isDriverCame = 1;
                 clientDriverArrivedView();
             }
         }
