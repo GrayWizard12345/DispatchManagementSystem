@@ -13,9 +13,9 @@
 Client client;
 pthread_t notifThreadID;
 
+void notify(void*);
 void startClientThreadNotification();
 void sendFirstMessage(Client client);
-void notify();
 
 int main() {
 
@@ -42,6 +42,15 @@ int main() {
     clientEnterOrderDetailsView(&client);
     client.orderTaxi(&client);
 
+    while (client.order.userId == -1);
+
+    int orderCancelled = clientWaitingForDriverView();
+    if(orderCancelled == 1) {
+        client.cancelOrder;
+        clientOrderCancelledView();
+        client.isUp = 0;
+    }
+
     //while (client.isUp == 1);   //This shit is suspicious
     pthread_join(notifThreadID, NULL);
 
@@ -60,12 +69,15 @@ void startClientThreadNotification() {
     pthread_create(&notifThreadID, NULL, (void *(*)(void *)) notify, NULL);
 }
 
-void notify(){
+void notify(void *var){
     char recMessage[MAX_MESSAGE_SIZE];
 
     MESSAGE_TYPE message_type;
 
     while(true){
+        if(client.isUp == 0)
+            break;
+
         memset(recMessage, 0, MAX_MESSAGE_SIZE);
         int bytes = read(client.connection->socket, recMessage, MAX_MESSAGE_SIZE);
         puts(recMessage);
@@ -78,15 +90,8 @@ void notify(){
             message_type = json_getMessageType(recMessage);
             printf("message typoe: %d", message_type);
             if(message_type == ORDER_ACCEPTED){
-                int orderCancelled = 0;
                 Vehicle vehicle = json_getVehicleFromJson(recMessage);
                 clientOrderAcceptedView(vehicle);
-                orderCancelled = clientWaitingForDriverView();
-                if(orderCancelled == 1) {
-                    client.cancelOrder;
-                    clientOrderCancelledView();
-                    break;
-                }
             }else if(message_type == DRIVER_ARRIVED){
                 clientDriverArrivedView();
             }
@@ -95,5 +100,5 @@ void notify(){
     }
 
     client.isUp = 0;
-    pthread_join(notifThreadID, NULL);
+    //pthread_join(notifThreadID, NULL);
 }
